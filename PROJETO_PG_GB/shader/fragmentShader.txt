@@ -1,0 +1,17 @@
+#version 410
+
+in vec2 TexCoord;
+
+uniform sampler2D sprite;
+uniform float offsetX;
+uniform float offsetY;
+
+out vec4 frag_color;
+
+void main() {
+    vec4 texel0 = texture(sprite,vec2(TexCoord.x + offsetX,-(TexCoord.y + offsetY)));
+    if(texel0.a < 0.5){
+        discard;
+    }
+    frag_color = texel0;
+}
