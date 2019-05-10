@@ -74,7 +74,4 @@
       <Filter>source</Filter>
     </Text>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="PROJETO_PG_GA.rc" />
-  </ItemGroup>
 </Project>

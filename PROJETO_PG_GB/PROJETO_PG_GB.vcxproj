@@ -45,9 +45,6 @@
     <Text Include="shader\fragmentShader.txt" />
     <Text Include="shader\vertexShader.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="PROJETO_PG_GA.rc" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6CE88CAA-5B08-4D10-90E2-5A9051699676}</ProjectGuid>
     <RootNamespace>Sabertooth</RootNamespace>
