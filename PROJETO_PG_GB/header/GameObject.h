@@ -8,7 +8,7 @@ public:
 	Shader *shaderProgram;
 	SpriteSheet* sprites;
 	VerticesObject* vertices;
-	Position* position;
+	Transformations* position;
 	double previousFrameTime;
 
 	float frameChangeSpeed;
@@ -34,15 +34,15 @@ public:
         this->height = height;
         this->gameIsRunning =gameIsRunning;
 
-		setupVertices(sprites->frames, sprites->actions);
+		setupVertices(sprites->columns, sprites->rows);
 
 		//poe na pos inicial
-		position = new Position(initialPosX, initialPosY);
+		position = new Transformations(initialPosX, initialPosY);
 	}
 
 	/*
-		actions e o numero de linhas da imagem de sprites
-		frames  e o numero de colunas da imagem de sprites
+		rows e o numero de linhas da imagem de sprites
+		columns  e o numero de colunas da imagem de sprites
 	*/
 	void setupVertices(int frames, int actions) {
 		/*
@@ -101,7 +101,7 @@ public:
 		double elapsedSeconds = currentSeconds - previousFrameTime;
 		if (elapsedSeconds > frameChangeSpeed) {
 			if (*gameIsRunning)
-				sprites->nextFrame();
+				sprites->nextColumn();
 			previousFrameTime = currentSeconds;
 		}
 	}

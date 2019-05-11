@@ -4,27 +4,22 @@
 CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o
  ../././header/stb_image.h
  .././header/./stb_image.h
- .././header/BackgroundObject.h
- .././header/Character.h
  .././header/GameObject.h
  .././header/Includes.h
  .././header/Layer.h
- .././header/Position.h
- .././header/Projectile.h
  .././header/Shader.h
  .././header/SpriteSheet.h
  .././header/Texture.h
+ .././header/Tilemap.h
+ .././header/Transformations.h
  .././header/VerticesObject.h
- /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/BackgroundObject.h
- /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Character.h
  /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/GameObject.h
  /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Includes.h
  /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Layer.h
- /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Position.h
- /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Projectile.h
  /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Shader.h
  /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/SpriteSheet.h
  /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Texture.h
+ /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Tilemap.h
  /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/VerticesObject.h
  /Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/source/main.cpp
  /usr/local/include/GL/glew.h

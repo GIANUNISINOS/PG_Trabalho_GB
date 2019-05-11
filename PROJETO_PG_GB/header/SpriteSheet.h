@@ -6,19 +6,19 @@ class SpriteSheet
 {
 public:
 	Texture* texture;
-	int actions;
-	int frames;
-	int currentAction;
-	int currentFrame;
+	int rows;
+	int columns;
+	int currentRow;
+	int currentColumn;
 	float z;
 
-	SpriteSheet(string filename, int framesParam, int actionsParam, float zParam) {
-		texture = new Texture(filename, true);
-		actions = actionsParam;
-		frames = framesParam;
-		currentAction = 0;
-		currentFrame = 0;
-		z = zParam;
+	SpriteSheet(string filename, bool useAlpha, int columns, int rows, float z) {
+        this->texture = new Texture(filename, useAlpha);
+		this->rows = rows;
+        this->columns = columns;
+        this->currentRow = 0;
+        this->currentColumn = 0;
+        this->z = z;
 
 	};
 
@@ -29,23 +29,23 @@ public:
 	}
 
 	float getOffsetX() {
-		return (float)1 / frames * (currentFrame % frames);
+		return (float)1 / columns * (currentColumn % columns);
 	}
 
 	float getOffsetY() {
-		return (float)1 / actions * (currentAction % actions);
+		return (float)1 / rows * (currentRow % rows);
 	}
 
-	void nextFrame() {
-		currentFrame++;
+	void nextColumn() {
+		currentColumn++;
 	}
 
-    void setActions(int a) {
-        currentAction = a;
+    void setRow(int a) {
+        currentRow = a;
     }
 
-    void setFrame(int a) {
-        currentFrame = a;
+    void setColumn(int a) {
+        currentColumn = a;
     }
 };
 

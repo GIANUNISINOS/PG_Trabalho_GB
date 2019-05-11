@@ -5,16 +5,19 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(.)
 
-
-
 add_executable(PROJETO_PG_GB
         CMakeLists.txt
         source/main.cpp
         header/Includes.h
-        header/SpriteSheet.h
         header/Shader.h
+        header/Texture.h
+        header/Layer.h
+        header/SpriteSheet.h
+        header/VerticesObject.h
+        header/Transformations.h
         header/GameObject.h
-        header/Character.h)
+        header/Tilemap.h
+        )
 
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)

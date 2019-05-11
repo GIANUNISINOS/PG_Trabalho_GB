@@ -1,5 +1,5 @@
 #pragma once
-class Position
+class Transformations
 {
 public:
 	float xCenter;
@@ -10,7 +10,7 @@ public:
 	glm::mat4 matrix_scala;
 	glm::mat4 transformations;
 
-	Position(float initialPosX, float initialPosY) {
+	Transformations(float initialPosX, float initialPosY) {
 		xCenter = 0.0f;
 		yCenter = 0.0f;
 	
@@ -43,6 +43,6 @@ public:
 		transformations = matrix_translaction * matrix_rotation * matrix_scala;
 	}
 
-	~Position() {};
+	~Transformations() {};
 };
 

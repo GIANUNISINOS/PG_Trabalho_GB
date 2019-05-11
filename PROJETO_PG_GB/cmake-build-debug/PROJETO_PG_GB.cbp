@@ -89,19 +89,31 @@
 		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/CMakeLists.txt">
 			<Option target="PROJETO_PG_GB"/>
 		</Unit>
-		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Character.h">
-			<Option target="PROJETO_PG_GB"/>
-		</Unit>
 		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/GameObject.h">
 			<Option target="PROJETO_PG_GB"/>
 		</Unit>
 		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Includes.h">
 			<Option target="PROJETO_PG_GB"/>
 		</Unit>
+		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Layer.h">
+			<Option target="PROJETO_PG_GB"/>
+		</Unit>
 		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Shader.h">
 			<Option target="PROJETO_PG_GB"/>
 		</Unit>
 		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/SpriteSheet.h">
+			<Option target="PROJETO_PG_GB"/>
+		</Unit>
+		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Texture.h">
+			<Option target="PROJETO_PG_GB"/>
+		</Unit>
+		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Tilemap.h">
+			<Option target="PROJETO_PG_GB"/>
+		</Unit>
+		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/Transformations.h">
+			<Option target="PROJETO_PG_GB"/>
+		</Unit>
+		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/header/VerticesObject.h">
 			<Option target="PROJETO_PG_GB"/>
 		</Unit>
 		<Unit filename="/Users/gian/GitHub/PG_Trabalho_GB/PROJETO_PG_GB/source/main.cpp">

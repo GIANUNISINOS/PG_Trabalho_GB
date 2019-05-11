@@ -5,11 +5,9 @@
     #include "header/Layer.h";
     #include "header/SpriteSheet.h";
     #include "header/VerticesObject.h";
-	#include "header/Position.h";
+	#include "header/Transformations.h";
 	#include "header/GameObject.h";
-	#include "header/Projectile.h";
-    #include "header/Character.h";
-    #include "header/BackgroundObject.h";
+    #include "header/Tilemap.h";
 #elif _WIN64
 	#include "../header/Includes.h";
 	#include "../header/Shader.h";
@@ -19,7 +17,6 @@
 	#include "../header/VerticesObject.h";
 	#include "../header/Position.h";
 	#include "../header/GameObject.h";
-	#include "../header/Tileset.h";
 	#include "../header/Tilemap.h";
 #endif
 
@@ -98,6 +95,11 @@ int main() {
 	glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    //instancia do tilemap
+    //Tilemap(float totalWidth, float totalHeight, int numRows, int numCols);
+    Tilemap *tilemap = new Tilemap(WIDTH, HEIGHT, 10, 10);
+
+
     // looping do main
 	while (!glfwWindowShouldClose(window)) {
 
@@ -108,6 +110,9 @@ int main() {
 		
 		glUniformMatrix4fv(
 			glGetUniformLocation(shaderProgram->Program, "proj"), 1, GL_FALSE, glm::value_ptr(projection));
+
+		//desenha tilemap
+        tilemap->draw(shaderProgram);
 
         //fila eventos 
 		glfwPollEvents();
