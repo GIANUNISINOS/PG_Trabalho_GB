@@ -13,9 +13,6 @@
     <ClInclude Include="header\GameObject.h">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="header\BackgroundObject.h">
-      <Filter>headers</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="header\SpriteSheet.h">
       <Filter>headers</Filter>
@@ -32,10 +29,12 @@
     <ClInclude Include="header\Position.h">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="header\Projectile.h">
+    <ClInclude Include="Tilemap.h" />
+    <ClInclude Include="Tileset.h" />
+    <ClInclude Include="header\Tilemap.h">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="header\Character.h">
+    <ClInclude Include="header\Tileset.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,19 +19,12 @@
 	#include "../header/VerticesObject.h";
 	#include "../header/Position.h";
 	#include "../header/GameObject.h";
-	#include "../header/Projectile.h";
-	#include "../header/Character.h";
-	#include "../header/BackgroundObject.h";
+	#include "../header/Tileset.h";
+	#include "../header/Tilemap.h";
 #endif
 
 Shader *shaderProgram;
 GLFWwindow *window;
-bool gameIsRunning;
-time_t timeEnd;
-
-BackgroundObject* background;
-Character* character;
-Projectile* projetil;
 
 //Atributos janela
 int WIDTH = 800;
@@ -57,28 +50,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if(action == GLFW_RELEASE) keys[key] = 0;
 }
 
-void main_keyboard_reaction() {
-    if (keys[GLFW_KEY_SPACE] == 1) {
-        if(gameIsRunning==false){
-            // Tempo que ira acabar o jogo (30 segundos)
-            timeEnd = time(NULL) + 30;
-            gameIsRunning = true;
-            //posicao inicial
-            character->position->move(400.0f-character->position->xCenter, 490.0f-character->position->yCenter);
-            projetil->position->move(900.0f-projetil->position->xCenter, 490.0f-projetil->position->yCenter);
-
-            //remove da tela game win e game over
-            background->layers[4]->z = -1.48;
-            background->layers[5]->z = -1.47;
-        }
-    }
-    if (keys[GLFW_KEY_ESCAPE] == 1) {
-        glfwSetWindowShouldClose(window, true);
-    }
-
-}
-
-
 GLFWwindow* createWindow() {
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to survive thirty seconds!", NULL, NULL);
     if (window == NULL) {
@@ -88,36 +59,6 @@ GLFWwindow* createWindow() {
     }
     glfwMakeContextCurrent(window);
     return window;
-}
-
-void testGameWinOrOver(){
-
-    //testa colisão da morte
-    bool difInX =
-            (character->position->xCenter + character->width / 2.0f)-40.0f > (projetil->position->xCenter - projetil->width/2.0f)
-            &&(character->position->xCenter - character->width / 2.0f)+60.0f< (projetil->position->xCenter + projetil->width/2.0f)
-    ;
-
-    bool difInY =
-            (character->position->yCenter + character->height/2.0f)-7.0f > (projetil->position->yCenter - projetil->height/2.0f);
-
-
-
-    if(difInX && difInY && gameIsRunning){
-        printf("VOCÊ MORREU, GAME OVER!\n");
-        background->layers[5]->z = -0.47;
-        gameIsRunning = false;
-        //FECHAR JANELA!
-        //glfwSetWindowShouldClose(window, true);
-    }
-
-    //testa o tempo se viver, ganha
-    if (time(NULL) > timeEnd && gameIsRunning){
-        printf("VOCÊ GANHOU, GAME WIN!\n");
-        background->layers[4]->z = -0.48;
-        gameIsRunning = false;
-        //glfwSetWindowShouldClose(window, true);
-    }
 }
 
 int main() {
@@ -157,21 +98,6 @@ int main() {
 	glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // inicializa game
-    gameIsRunning = false;
-
-	//Create Objects
-    SpriteSheet* knightSprites = new SpriteSheet("resource/warrior.png", 8, 2, -0.48f);
-	knightSprites->setActions(1);
-
-    SpriteSheet* projetilSprites = new SpriteSheet("resource/fire.png", 5, 1, -0.47f);
-
-	background = new BackgroundObject(shaderProgram, (float)WIDTH, (float)HEIGHT, &gameIsRunning);
-
-	character  = new Character(shaderProgram, knightSprites, &gameIsRunning);
-
-	projetil   = new Projectile(shaderProgram, projetilSprites, &gameIsRunning);
-
     // looping do main
 	while (!glfwWindowShouldClose(window)) {
 
@@ -183,35 +109,10 @@ int main() {
 		glUniformMatrix4fv(
 			glGetUniformLocation(shaderProgram->Program, "proj"), 1, GL_FALSE, glm::value_ptr(projection));
 
-		//camadas do fundo
-		background->draw();
-
-        //personagem que se movimenta via teclado
-		character->keyboard_reaction(keys);
-		character->draw();
-
-        //objeto inimigo que se movimenta automaticamente
-		projetil->draw();
-        projetil->doingLoping();
-
-        //testa reacoes do teclado como ESC e ESPACO
-        main_keyboard_reaction();
-
-        //testa colisoes e game win ou over
-        testGameWinOrOver();
-
         //fila eventos 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
-
-	delete knightSprites;
-	delete projetilSprites;
-	delete projetil;
-	delete background;
-	delete character;
-    delete shaderProgram;
-
     // encerra contexto GL e outros recursos da GLFW
     glfwTerminate();
 
