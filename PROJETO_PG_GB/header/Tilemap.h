@@ -19,8 +19,9 @@ public:
 
 Tilemap::Tilemap(float totalWidth, float totalHeight, int numRows, int numCols)
 {
-	//this->tileset = new SpriteSheet("resource/tileset.png",true, 64, 48, -0.10f);
-    this->tileset = new SpriteSheet("resource/warrior.png",true, 8, 2, -0.10f);
+	this->tileset = new SpriteSheet("resource/tileset.png",true, 64, 48, -0.10f);
+    //this->tileset = new SpriteSheet("resource/warrior.png",true, 8, 2, -0.10f);
+    //this->tileset = new SpriteSheet("resource/Terrain_Tileset.png",true, 6, 1, -0.10f);
 	this->numRows = numRows;
 	this->numCols = numCols;
 
@@ -51,16 +52,16 @@ void Tilemap::setupVertices(float width, float height) {
 
 void Tilemap::draw(Shader *shaderProgram) {
     int mapa[10][10] ={
-            {0 ,1 ,2 ,3 ,4, 5, 0, 0, 0, 0},
+            {64 ,1 ,2 ,3 ,4, 0, 0, 0, 0, 0},
             {0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0},
             {0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0},
             {0 ,0 ,0 ,1 ,1, 0, 0, 0, 0, 0},
+            {0 ,0 ,0 ,1 ,1, 0, 0, 0, 0, 0},
+            {0 ,0 ,0 ,1 ,1, 0, 0, 0, 0, 0},
             {0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0},
-            {0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0},
-            {0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0},
-            {6 ,7 ,8 ,9 ,0, 0, 0, 0, 0, 0},
-            {0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0},
-            {0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0}
+            {0 ,0 ,0 ,0 ,0, 0, 0, 4, 4, 0},
+            {0 ,0 ,0 ,0 ,0, 0, 0, 4, 2480, 2049},
+            {0 ,0 ,0 ,0 ,0, 0, 0, 0, 63, 64}
     };
 
     // Define shaderProgram como o shader a ser utilizado
