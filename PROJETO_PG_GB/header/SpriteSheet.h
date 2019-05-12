@@ -47,6 +47,10 @@ public:
     void setColumn(int a) {
         currentColumn = a;
     }
+
+    int getIDSomeTile(int which_col, int which_row){
+        return which_col + (columns * which_row);
+	}
 };
 
 SpriteSheet::~SpriteSheet()
