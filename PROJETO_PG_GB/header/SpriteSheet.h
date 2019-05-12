@@ -33,7 +33,7 @@ public:
 	}
 
 	float getOffsetY() {
-		return (float)1 / rows * (currentRow % rows);
+		return 1.00f - (1.00f / rows * (currentRow % rows));
 	}
 
 	void nextColumn() {

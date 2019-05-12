@@ -61,7 +61,7 @@ void Tilemap::draw(Shader *shaderProgram) {
             {0 ,0 ,0 ,0 ,0, 0, 0, 0, 0, 0},
             {0 ,0 ,0 ,0 ,0, 0, 0, 4, 4, 0},
             {0 ,0 ,0 ,0 ,0, 0, 0, 4, 2480, 2049},
-            {0 ,0 ,0 ,0 ,0, 0, 0, 0, 63, 64}
+            {0 ,0 ,0 ,0 ,0, 0, 0, 0, 63, 67}
     };
 
     // Define shaderProgram como o shader a ser utilizado
