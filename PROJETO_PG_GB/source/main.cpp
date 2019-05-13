@@ -25,7 +25,7 @@ GLFWwindow *window;
 
 //Atributos janela
 int WIDTH = 800;
-int HEIGHT = 600;
+int HEIGHT = 640;
 
 //teclas pressionadas
 int keys[1024];
@@ -97,7 +97,7 @@ int main() {
 
     //instancia do tilemap
     //Tilemap(float totalWidth, float totalHeight, int numRows, int numCols);
-    Tilemap *tilemap = new Tilemap(WIDTH, HEIGHT, 10, 10);
+    Tilemap *tilemap = new Tilemap(WIDTH, HEIGHT, 20, 25);
 
 
     // looping do main
@@ -106,7 +106,7 @@ int main() {
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// glm projecao
-		glm::mat4 projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
+		glm::mat4 projection = glm::ortho(0.0f, (float)WIDTH, (float)HEIGHT, 0.0f, -1.0f, 1.0f);
 		
 		glUniformMatrix4fv(
 			glGetUniformLocation(shaderProgram->Program, "proj"), 1, GL_FALSE, glm::value_ptr(projection));
