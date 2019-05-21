@@ -97,7 +97,7 @@ int main() {
 
     //instancia do tilemap
     //Tilemap(float totalWidth, float totalHeight, int numRows, int numCols);
-    Tilemap *tilemap = new Tilemap(WIDTH, HEIGHT, 20, 25);
+    Tilemap *tilemap = new Tilemap(WIDTH, HEIGHT, 20, 3);
 
 
     // looping do main
