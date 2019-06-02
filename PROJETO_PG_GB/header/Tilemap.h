@@ -21,7 +21,8 @@ public:
 
 Tilemap::Tilemap(float tileWidth, float tileHeight, int numRows, int numCols)
 {
-	this->tileset = new SpriteSheet("resource/tileset.png",true, 64, 48, -0.10f);
+    this->tileset = new SpriteSheet("resource/mapa/seasons_tiles - resize.png",true, 8, 12, -0.10f);
+	//this->tileset = new SpriteSheet("resource/tileset.png",true, 64, 48, -0.10f);
     //this->tileset = new SpriteSheet("resource/warrior.png",true, 8, 2, -0.10f);
     //this->tileset = new SpriteSheet("resource/Terrain_Tileset.png",true, 6, 1, -0.10f);
 	this->numRows = numRows;
@@ -38,14 +39,18 @@ Tilemap::Tilemap(float tileWidth, float tileHeight, int numRows, int numCols)
 
 void Tilemap::setupVertices(float width, float height) {
 	/*
-		Comeca centralizado no zero
+		Comeca no zero canto 0 parte esquerda
 	*/
+
+    float xt = (1.0f/((float)tileset->columns));
+    float yt = (1.0f/((float)tileset->rows));
+
 	float verticesCoordinates[] = {
 		// positions						        // texture coords
-		width / 2.0f,   0.0f,           0.0f,		0.0f,						        1.0f,									// TOP
-		width ,         height / 2.0f,  0.0f,		0.0f,						        1.00f - (1.00f / (float)tileset->rows),	// RIGHT
-		width  / 2.0f,  height,         0.0f,		1.00f / (float)tileset->columns,    1.00f - (1.00f / (float)tileset->rows),	// BOTTOM
-		0.0f,           height / 2.0f,  0.0f,		1.00f / (float)tileset->columns,    1.0f,									// top right
+		width / 2.0f,   0.0f,           0.0f,		xt/2.0f ,    yt      ,  // TOP
+		width ,         height / 2.0f,  0.0f,		0.0f    ,    yt/2.0f ,	// RIGHT
+		width  / 2.0f,  height,         0.0f,		xt/2.0f ,    0.0f    ,    // BOTTOM
+		0.0f,           height / 2.0f,  0.0f,		xt      ,    yt/2.0f    // LEFT
 	};
 
 	vertices = new VerticesObject(verticesCoordinates, 20);
@@ -54,49 +59,23 @@ void Tilemap::setupVertices(float width, float height) {
 
 
 void Tilemap::draw(Shader *shaderProgram) {
-//    int mapa[10][10] ={
-//            {836, 837, 838, 836, 837, 838, 836, 837, 838, 836},
-//            {832, 833, 834, 832, 833, 834, 832, 833, 834, 832},
-//            {836, 837, 838, 836, 837, 838, 836, 837, 838, 836},
-//            {832, 833, 834, 832, 833, 834, 832, 833, 834, 832},
-//            {836, 837, 838, 836, 837, 838, 836, 837, 838, 836},
-//            {832, 833, 834, 832, 833, 834, 832, 833, 834, 832},
-//            {836, 837, 838, 836, 837, 838, 836, 837, 838, 836},
-//            {832, 833, 834, 832, 833, 834, 832, 833, 834, 832},
-//            {836, 837, 838, 836, 837, 838, 836, 837, 838, 836},
-//            {832, 833, 834, 832, 833, 834, 832, 833, 834, 832}
-//    };
-
-//    int gr = tileset->getIDSomeTile(54,15);
-//
-//    int mapa[10][10] ={
-//            {gr, gr, gr, gr, gr, tileset->getIDSomeTile(20,6), gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, 199, gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr},
-//            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr}
-//    };
-
-    int mapa[14][14] = {
-   {1,2,3,4,963,963,963,963,963,963,963,963,963,963},
-   {4,3,2,1,963,963,963,963,963,963,963,963,963,963},
-   {970,968,968,968,968,968,968,968,968,968,968,968,968,968},
-   {973,971,971,971,971,971,971,971,971,971,971,971,971,971},
-   {962,963,963,963,963,963,963,963,963,963,963,963,963,963},
-   {962,963,963,963,963,963,963,963,963,963,963,963,963,963},
-   {962,963,963,963,963,963,963,963,963,963,963,963,963,963},
-   {962,963,963,963,963,963,963,963,963,963,963,963,963,963},
-   {963,963,963,963,963,963,963,963,963,963,963,963,963,963},
-   {963,963,963,963,963,963,963,963,963,963,963,963,963,963},
-   {968,968,968,968,968,968,968,968,968,968,968,968,968,968},
-   {971,971,971,971,971,971,971,971,971,971,971,971,971,971},
-   {962,963,963,963,963,963,963,963,963,963,963,963,963,963}
-    };
+   int mapa[ROWS][COLS] = {
+      // {39,  9,  9, 37, 69, 48, 68, 20, 22, 39,  9,  9,  9, 12},
+       {1,  2,  3, 4, 69, 48, 68, 20, 22, 39,  9,  9,  9, 12},
+       {34, 20, 24, 24, 24, 48, 20, 22, 21, 21, 24, 24, 20, 32},
+       {34, 24, 68, 68, 48, 48, 48, 48, 48, 48, 20, 24, 24, 32},
+       {34, 24, 69, 48, 44, 23, 23, 21, 23, 48, 20, 20, 24, 32},
+       {34, 45, 48, 51, 23, 44, 22, 23, 22, 48, 48, 48, 24, 32},
+       {34, 24, 68, 51, 48, 48, 48, 48, 48, 48, 20, 48, 45, 32},
+       {34, 24, 48, 48, 68, 68, 68, 48, 48, 69, 24, 48, 24, 32},
+       {34, 44, 24, 48, 48, 48, 48, 48, 24, 24, 24, 48, 24, 42},
+       {34, 24, 23, 48, 27, 27, 27, 27, 68, 24, 24, 48, 24, 24},
+       {34, 24, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 68, 24},
+       {34, 20, 48, 24, 24, 20, 27, 48, 48, 24, 24, 24, 27, 24},
+       {34, 24, 48, 24, 20, 27, 27, 48, 48, 24, 69, 68, 27, 68},
+       {34, 20, 68, 24, 20, 20, 27, 68, 48, 48, 48, 48, 48, 48},
+       {36, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 43, 68, 48}
+   };
 
     // Define shaderProgram como o shader a ser utilizado
     shaderProgram->UseProgramShaders();
@@ -140,6 +119,7 @@ void Tilemap::draw(Shader *shaderProgram) {
 
             // Define em quais vertices sera desenhado pelo shader
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         }
     }
 }

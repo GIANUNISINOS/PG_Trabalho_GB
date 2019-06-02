@@ -1,3 +1,11 @@
+// tamanho do mapa
+#define ROWS 14
+#define COLS 14
+
+// tamanho dos tiles
+#define TILE_WIDTH  80
+#define TILE_HEIGHT 40
+
 #ifdef __APPLE__
     #include "header/Includes.h";
     #include "header/Shader.h";
@@ -22,14 +30,6 @@
 
 Shader *shaderProgram;
 GLFWwindow *window;
-
-// tamanho do mapa
-const int ROWS = 14;
-const int COLS = 14;
-
-// tamanho dos tiles
-const float TILE_WIDTH = 80.0f;
-const float TILE_HEIGHT = 40.0f;
 
 //Atributos janela
 const int WIDTH = ROWS*TILE_WIDTH;
