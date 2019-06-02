@@ -23,9 +23,21 @@
 Shader *shaderProgram;
 GLFWwindow *window;
 
+// tamanho do mapa
+const int ROWS = 14;
+const int COLS = 14;
+
+// tamanho dos tiles
+const float TILE_WIDTH = 80.0f;
+const float TILE_HEIGHT = 40.0f;
+
 //Atributos janela
-int WIDTH = 800;
-int HEIGHT = 640;
+const int WIDTH = ROWS*TILE_WIDTH;
+const int HEIGHT = COLS*TILE_HEIGHT;
+
+//Atributos janela
+int RESIZED_WIDTH = WIDTH;
+int RESIZED_HEIGHT = HEIGHT;
 
 //teclas pressionadas
 int keys[1024];
@@ -33,6 +45,8 @@ int keys[1024];
 //Define acoes do redimensionamento da tela
 void window_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    RESIZED_WIDTH = width;
+    RESIZED_HEIGHT = height;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -96,8 +110,7 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     //instancia do tilemap
-    //Tilemap(float totalWidth, float totalHeight, int numRows, int numCols);
-    Tilemap *tilemap = new Tilemap(WIDTH, HEIGHT, 20, 3);
+    Tilemap *tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
 
 
     // looping do main

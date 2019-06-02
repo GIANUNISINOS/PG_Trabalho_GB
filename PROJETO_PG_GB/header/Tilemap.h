@@ -5,6 +5,7 @@ class Tilemap
 public:
 	int numRows, numCols;
     float tileWidth, tileHeight;
+    float sum_tiles_heigth;
 
     glm::mat4 modelMatrix;
 
@@ -18,7 +19,7 @@ public:
 	
 };
 
-Tilemap::Tilemap(float totalWidth, float totalHeight, int numRows, int numCols)
+Tilemap::Tilemap(float tileWidth, float tileHeight, int numRows, int numCols)
 {
 	this->tileset = new SpriteSheet("resource/tileset.png",true, 64, 48, -0.10f);
     //this->tileset = new SpriteSheet("resource/warrior.png",true, 8, 2, -0.10f);
@@ -26,10 +27,10 @@ Tilemap::Tilemap(float totalWidth, float totalHeight, int numRows, int numCols)
 	this->numRows = numRows;
 	this->numCols = numCols;
 
-    this->tileWidth = totalWidth / ((float)numCols + (float)numCols/2.0f);
-    this->tileHeight = tileWidth / 2.0f;
+    this->tileWidth = tileWidth;
+    this->tileHeight = tileHeight;
 
-
+    this->sum_tiles_heigth = tileHeight*numCols;
 	this->modelMatrix = glm::mat4(1);
 
 	this->setupVertices(tileWidth, tileHeight);
@@ -81,27 +82,20 @@ void Tilemap::draw(Shader *shaderProgram) {
 //            {gr, gr, gr, gr, gr, gr, gr, gr, gr, gr}
 //    };
 
-    int mapa[20][3] = {
-   {962,963,963},
-   {962,963,963},
-   {970,968,968},
-   {973,971,971},
-   {962,963,963},
-   {962,963,963},
-   {962,963,963},
-   {962,963,963},
-   {963,963,963},
-   {963,963,963},
-   {968,968,968},
-   {971,971,971},
-   {962,963,963},
-   {962,963,963},
-   {962,963,963},
-   {962,963,963},
-   {970,968,968},
-   {973,971,971},
-   {966,966,966},
-   {966,966,966}
+    int mapa[14][14] = {
+   {1,2,3,4,963,963,963,963,963,963,963,963,963,963},
+   {4,3,2,1,963,963,963,963,963,963,963,963,963,963},
+   {970,968,968,968,968,968,968,968,968,968,968,968,968,968},
+   {973,971,971,971,971,971,971,971,971,971,971,971,971,971},
+   {962,963,963,963,963,963,963,963,963,963,963,963,963,963},
+   {962,963,963,963,963,963,963,963,963,963,963,963,963,963},
+   {962,963,963,963,963,963,963,963,963,963,963,963,963,963},
+   {962,963,963,963,963,963,963,963,963,963,963,963,963,963},
+   {963,963,963,963,963,963,963,963,963,963,963,963,963,963},
+   {963,963,963,963,963,963,963,963,963,963,963,963,963,963},
+   {968,968,968,968,968,968,968,968,968,968,968,968,968,968},
+   {971,971,971,971,971,971,971,971,971,971,971,971,971,971},
+   {962,963,963,963,963,963,963,963,963,963,963,963,963,963}
     };
 
     // Define shaderProgram como o shader a ser utilizado
@@ -116,8 +110,17 @@ void Tilemap::draw(Shader *shaderProgram) {
     for (int col = 0; col < numCols; col++) {
         for (int row = 0; row < numRows; row++) {
 
-            float xi = col*tileWidth  + row *(tileWidth/2.0f) ;
-            float yi = row*tileHeight/2.0f ;
+            //linear
+            //float xi = col*tileWidth;
+            //float yi = row*tileHeight;
+
+            //slidemap
+            //float xi = col*tileWidth  + row *(tileWidth/2.0f) ;
+            //float yi = row*tileHeight/2.0f ;
+
+            //diamond map
+            float xi = row * (tileWidth/2.0f) + col * (tileWidth/2.0f);
+            float yi = (row/*-1*/) * (tileHeight/2.0f) - col * (tileHeight/2.0f) + sum_tiles_heigth/2.0f;
 
             modelMatrix = glm::mat4(1);
             modelMatrix = glm::translate(modelMatrix, glm::vec3(xi, yi, 0.0));
