@@ -14,6 +14,7 @@ public:
     Tilemap(float totalWidth, float totalHeight, int numRows, int numCols);
 	void draw(Shader *shaderProgram);
 	void setupVertices(float width, float height);
+    void calculoDesenhoDiamond(float &x, float &y, int row, int col);
 	~Tilemap();
 	
 };
@@ -56,6 +57,11 @@ void Tilemap::setupVertices(float width, float height) {
 
 }
 
+
+void Tilemap::calculoDesenhoDiamond(float &x, float &y, int row, int col){
+    x = row * (this->tileWidth/2.0f) + col * (this->tileWidth/2.0f);
+    y = row * (this->tileHeight/2.0f) - col * (this->tileHeight/2.0f) + this->sum_tiles_heigth/2.0f - (this->tileHeight/2.0f);
+}
 
 void Tilemap::draw(Shader *shaderProgram) {
 //   int mapa[ROWS][COLS] = {
@@ -113,8 +119,9 @@ void Tilemap::draw(Shader *shaderProgram) {
             //float yi = row*tileHeight/2.0f ;
 
             //diamond map
-            float xi = row * (tileWidth/2.0f) + col * (tileWidth/2.0f);
-            float yi = (row/*-1*/) * (tileHeight/2.0f) - col * (tileHeight/2.0f) + sum_tiles_heigth/2.0f;
+            float xi;// = row * (tileWidth/2.0f) + col * (tileWidth/2.0f);
+            float yi;// = (row/*-1*/) * (tileHeight/2.0f) - col * (tileHeight/2.0f) + sum_tiles_heigth/2.0f;
+            calculoDesenhoDiamond(xi,yi,row,col);
 
             modelMatrix = glm::mat4(1);
             modelMatrix = glm::translate(modelMatrix, glm::vec3(xi, yi, 0.0));

@@ -31,6 +31,8 @@
 Shader *shaderProgram;
 GLFWwindow *window;
 
+bool gameIsRunning = true;
+
 //Atributos janela
 const int WIDTH = ROWS*TILE_WIDTH;
 const int HEIGHT = COLS*TILE_HEIGHT;
@@ -112,6 +114,21 @@ int main() {
     //instancia do tilemap
     Tilemap *tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
 
+    //cria objeto
+    SpriteSheet* SScarNE =new SpriteSheet("resource/cars/4cars.png",true, 2, 2, 0.94f);
+    SScarNE->setColumn(1);
+    SScarNE->setRow(0);
+
+    float xcarNEinitial;
+    float ycarNEinitial;
+    tilemap->calculoDesenhoDiamond(xcarNEinitial,ycarNEinitial,13,0);
+    GameObject *carNE = new GameObject(
+            SScarNE,
+            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
+            xcarNEinitial+(TILE_WIDTH/2),ycarNEinitial+(TILE_HEIGHT/2),
+            0.5f, false,&gameIsRunning
+            );
+
 
     // looping do main
 	while (!glfwWindowShouldClose(window)) {
@@ -126,6 +143,8 @@ int main() {
 
 		//desenha tilemap
         tilemap->draw(shaderProgram);
+
+        carNE->draw(shaderProgram);
 
         //fila eventos 
 		glfwPollEvents();

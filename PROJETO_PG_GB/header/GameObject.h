@@ -5,7 +5,6 @@
 class GameObject
 {
 public:
-	Shader *shaderProgram;
 	SpriteSheet* sprites;
 	VerticesObject* vertices;
 	Transformations* position;
@@ -21,8 +20,7 @@ public:
 
     bool *gameIsRunning;
 
-	GameObject(Shader* shaderProgramParam, SpriteSheet* spritesParam, float width, float height, float initialPosX, float initialPosY, float speedParam, bool invertX, bool *gameIsRunning) {
-		shaderProgram = shaderProgramParam;
+	GameObject(SpriteSheet* spritesParam,float width, float height, float initialPosX, float initialPosY, float speedParam, bool invertX, bool *gameIsRunning) {
 		sprites = spritesParam;
 		previousFrameTime = glfwGetTime();
 
@@ -73,7 +71,7 @@ public:
 
 	}
 
-	void draw() {
+	void draw(Shader* shaderProgram) {
 		// Define shaderProgram como o shader a ser utilizado
 		shaderProgram->UseProgramShaders();
 
@@ -91,8 +89,6 @@ public:
 		vertices->bind(shaderProgram);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		changeFrame();
 	}
 
 	void changeFrame() {
