@@ -29,11 +29,11 @@ public:
 	}
 
 	float getOffsetX() {
-		return (float)1 / columns * (currentColumn % columns);
+		return (float)(1.00f / columns) * (currentColumn % columns);
 	}
 
 	float getOffsetY() {
-		return 1.00f - (1.00f / rows * (currentRow % rows));
+		return 1.00f-(1.00f / rows * (currentRow % rows));
 	}
 
 	void nextColumn() {

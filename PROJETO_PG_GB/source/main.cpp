@@ -1,3 +1,21 @@
+// tamanho do mapa
+#define ROWS 14
+#define COLS 14
+
+//tamanho dos tiles
+#define TILE_WIDTH  80
+#define TILE_HEIGHT 40
+
+//define direcoes
+#define DIRECTION_NO 1
+#define DIRECTION_O 2
+#define DIRECTION_SO 3
+#define DIRECTION_N 4
+#define DIRECTION_S 5
+#define DIRECTION_NE 6
+#define DIRECTION_E 7
+#define DIRECTION_SE 8
+
 #ifdef __APPLE__
     #include "header/Includes.h";
     #include "header/Shader.h";
@@ -22,10 +40,18 @@
 
 Shader *shaderProgram;
 GLFWwindow *window;
+Tilemap *tilemap;
+GameObject *car;
+
+bool gameIsRunning = true;
 
 //Atributos janela
-int WIDTH = 800;
-int HEIGHT = 640;
+const int WIDTH = ROWS*TILE_WIDTH;
+const int HEIGHT = COLS*TILE_HEIGHT;
+
+//Atributos janela
+int RESIZED_WIDTH = WIDTH;
+int RESIZED_HEIGHT = HEIGHT;
 
 //teclas pressionadas
 int keys[1024];
@@ -33,6 +59,8 @@ int keys[1024];
 //Define acoes do redimensionamento da tela
 void window_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    RESIZED_WIDTH = width;
+    RESIZED_HEIGHT = height;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -46,6 +74,64 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if(action == GLFW_PRESS) keys[key] = 1;
 	if(action == GLFW_RELEASE) keys[key] = 0;
 }
+
+void do_a_movement(int a) {
+    int colCar = car->transformations->tilePositionCol;
+    int rowCar = car->transformations->tilePositionRow;
+
+    switch (a) {
+        case DIRECTION_SE: // clicar para baixo
+            if (rowCar < (ROWS - 1) && tilemap->matrixTiles[rowCar+1][colCar]->isWalking ) {
+                car->transformations->tilePositionRow++;
+                car->sprites->setRow(1);
+                car->sprites->setColumn(1);
+                car->transformations->move(TILE_WIDTH/2.0f, TILE_HEIGHT/2.0f);
+            }
+            break;
+        case DIRECTION_NO:// clicar para cima
+            if (rowCar > 0 && tilemap->matrixTiles[rowCar-1][colCar]->isWalking ) {
+                car->transformations->tilePositionRow--;
+                car->sprites->setRow(0);
+                car->sprites->setColumn(0);
+                car->transformations->move(-TILE_WIDTH/2.0f, -TILE_HEIGHT/2.0f);
+            }
+            break;
+        case DIRECTION_NE:// clicar para direita
+            if (colCar < (COLS - 1) &&  tilemap->matrixTiles[rowCar][colCar+1]->isWalking ) {
+                car->transformations->tilePositionCol++;
+                car->sprites->setRow(0);
+                car->sprites->setColumn(1);
+                car->transformations->move(TILE_WIDTH / 2.0f, -TILE_HEIGHT / 2.0f);
+            }
+            break;
+        case DIRECTION_SO:// clicar para esquerda
+            if (colCar > 0 &&  tilemap->matrixTiles[rowCar][colCar-1]->isWalking ) {
+                car->transformations->tilePositionCol--;
+                car->sprites->setRow(1);
+                car->sprites->setColumn(0);
+                car->transformations->move(-TILE_WIDTH / 2.0f, TILE_HEIGHT / 2.0f);
+            }
+            break;
+    }
+
+}
+
+void keboard_reaction(){
+    if (keys[GLFW_KEY_DOWN] == 1) {
+        do_a_movement(DIRECTION_SE);
+    }
+    else if (keys[GLFW_KEY_UP] == 1) {
+        do_a_movement(DIRECTION_NO);
+    }
+    else if (keys[GLFW_KEY_RIGHT] == 1) {
+        do_a_movement(DIRECTION_NE);
+    }
+    else if (keys[GLFW_KEY_LEFT] == 1) {
+        do_a_movement(DIRECTION_SO);
+    }
+}
+
+
 
 GLFWwindow* createWindow() {
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to survive thirty seconds!", NULL, NULL);
@@ -95,10 +181,31 @@ int main() {
 	glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    //instancia do tilemap
-    //Tilemap(float totalWidth, float totalHeight, int numRows, int numCols);
-    Tilemap *tilemap = new Tilemap(WIDTH, HEIGHT, 20, 25);
+    // esta para quando clicar uma tecla
+    glfwSetKeyCallback(window, key_callback);
 
+    //instancia do tilemap
+    tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
+
+    //cria objeto sprites de carros
+    SpriteSheet* spritesCar =new SpriteSheet("resource/cars/4cars.png",true, 2, 2, 0.94f);
+    spritesCar->setColumn(1);
+    spritesCar->setRow(0);
+
+    //cria objeto carro
+    float xCarInitial;
+    float yCarInitial;
+    int tilePositionRow = 13;
+    int tilePositionCol = 0;
+    tilemap->calculoDesenhoDiamond(xCarInitial,yCarInitial,tilePositionRow,tilePositionCol);
+
+    car = new GameObject(
+            spritesCar,
+            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
+            xCarInitial+(TILE_WIDTH/2),yCarInitial+(TILE_HEIGHT/2),
+            0.5f, false,&gameIsRunning,
+            tilePositionRow, tilePositionCol
+            );
 
     // looping do main
 	while (!glfwWindowShouldClose(window)) {
@@ -114,6 +221,9 @@ int main() {
 		//desenha tilemap
         tilemap->draw(shaderProgram);
 
+        car->draw(shaderProgram);
+
+        keboard_reaction();
         //fila eventos 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
