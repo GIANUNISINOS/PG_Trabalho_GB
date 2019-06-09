@@ -7,7 +7,7 @@ class GameObject
 public:
 	SpriteSheet* sprites;
 	VerticesObject* vertices;
-	Transformations* position;
+	Transformations* transformations;
 	double previousFrameTime;
 
 	float frameChangeSpeed;
@@ -17,10 +17,9 @@ public:
 
     float width;
     float height;
-
     bool *gameIsRunning;
 
-	GameObject(SpriteSheet* spritesParam,float width, float height, float initialPosX, float initialPosY, float speedParam, bool invertX, bool *gameIsRunning) {
+	GameObject(SpriteSheet* spritesParam,float width, float height, float initialPosX, float initialPosY, float speedParam, bool invertX, bool *gameIsRunning,int tilePositionRow, int tilePositionCol) {
 		sprites = spritesParam;
 		previousFrameTime = glfwGetTime();
 
@@ -35,7 +34,7 @@ public:
 		setupVertices(sprites->columns, sprites->rows);
 
 		//poe na pos inicial
-		position = new Transformations(initialPosX, initialPosY);
+		transformations = new Transformations(initialPosX, initialPosY, tilePositionRow, tilePositionCol);
 	}
 
 	/*
@@ -77,7 +76,7 @@ public:
 
 		glUniformMatrix4fv(
 			glGetUniformLocation(shaderProgram->Program, "matrix_OBJ"), 1,
-			GL_FALSE, glm::value_ptr(position->transformations));
+			GL_FALSE, glm::value_ptr(transformations->transformations));
 
 		// Passa os offsets para o shader
 		sprites->passUniformsToShader(shaderProgram);
@@ -108,7 +107,7 @@ public:
 GameObject::~GameObject()
 {
 	delete vertices;
-	delete position;
+	delete transformations;
 }
 
 #endif //PROJETO_PG_GA_GAMEOBJECT_H

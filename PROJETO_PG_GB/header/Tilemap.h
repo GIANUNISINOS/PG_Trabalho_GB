@@ -1,4 +1,52 @@
-#pragma once
+class Tile {
+public:
+    bool isVisible;
+    bool isSelected;
+    bool isWalking;
+    bool isMortal;
+    int textureId;
+
+    //left point
+    float Ax, Ay;
+    //top point
+    float Bx, By;
+    //bottom point
+    float Cx, Cy;
+    //right point
+    float Dx, Dy;
+
+    Tile(){
+        isVisible = true;
+        isSelected = false;
+    }
+
+    Tile(float x0,float y0, int textureId, bool isWalking, bool isMortal) {
+        this->isVisible = true;
+        this->isSelected = false;
+        this->textureId = textureId;
+        this->isWalking = isWalking;
+        this->isMortal = isMortal;
+
+        //left point
+        Ax = x0;
+        Ay = y0 + TILE_HEIGHT / 2.0f;
+        //top point
+        Bx = x0 + TILE_WIDTH / 2.0f;
+        By = y0;
+        //bottom point
+        Cx = x0 + TILE_WIDTH / 2.0f;
+        Cy = y0 + TILE_HEIGHT;
+
+        //right point
+        Dx = x0 + TILE_WIDTH;
+        Dy = y0 + TILE_HEIGHT / 2.0f;
+    }
+
+    void getXandYReference(float &x0,float &y0){
+        x0 = Ax;
+        y0 = Ay - (TILE_HEIGHT / 2.0f);
+    }
+};
 
 class Tilemap
 {
@@ -10,6 +58,8 @@ public:
 
 	SpriteSheet* tileset;
 	VerticesObject* vertices;
+
+    Tile *matrixTiles[ROWS][COLS] = {};
 
     Tilemap(float tileWidth, float tileHeight, int numRows, int numCols ){
         this->tileset = new SpriteSheet("resource/mapa/seasons_tiles - resize.png",true, 8, 12, -0.10f);
@@ -26,6 +76,8 @@ public:
         this->modelMatrix = glm::mat4(1);
 
         this->setupVertices(tileWidth, tileHeight);
+
+        this->createMatrixTiles();
     }
 
     void setupVertices(float width, float height) {
@@ -86,41 +138,45 @@ public:
         col = xPos/tileWidth;
     }
 
-    void draw(Shader *shaderProgram) {
-    //   int mapa[ROWS][COLS] = {
-    //       {39,  9,  9, 37, 69, 48, 68, 20, 22, 39,  9,  9,  9, 12},
-    //       {34, 20, 24, 24, 24, 48, 20, 22, 21, 21, 24, 24, 20, 32},
-    //       {34, 24, 68, 68, 48, 48, 48, 48, 48, 48, 20, 24, 24, 32},
-    //       {34, 24, 69, 48, 44, 23, 23, 21, 23, 48, 20, 20, 24, 32},
-    //       {34, 45, 48, 51, 23, 44, 22, 23, 22, 48, 48, 48, 24, 32},
-    //       {34, 24, 68, 51, 48, 48, 48, 48, 48, 48, 20, 48, 45, 32},
-    //       {34, 24, 48, 48, 68, 68, 68, 48, 48, 69, 24, 48, 24, 32},
-    //       {34, 44, 24, 48, 48, 48, 48, 48, 24, 24, 24, 48, 24, 42},
-    //       {34, 24, 23, 48, 27, 27, 27, 27, 68, 24, 24, 48, 24, 24},
-    //       {34, 24, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 68, 24},
-    //       {34, 20, 48, 24, 24, 20, 27, 48, 48, 24, 24, 24, 27, 24},
-    //       {34, 24, 48, 24, 20, 27, 27, 48, 48, 24, 69, 68, 27, 68},
-    //       {34, 20, 68, 24, 20, 20, 27, 68, 48, 48, 48, 48, 48, 48},
-    //       {36, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 43, 68, 48}
-    //   };
-
-    // matriz de cima tranposta linhas e colunas
+    void createMatrixTiles() {
+        //matrix do mapa
         int mapa[ROWS][COLS] = {
-                {36, 34, 34,  34,  34, 34, 34, 34, 34,  34, 34, 34, 34, 39 },
-                {35, 20, 24,  20,  24, 24, 44, 24, 24,  45, 24, 24, 20,  9 },
-                {35, 68, 48,  48,  48, 23, 24, 48, 68,  48, 69, 68, 24,  9 },
-                {35, 24, 24,  24,  48, 48, 48, 48, 51,  51, 48, 68, 24, 37 },
-                {35, 20, 20,  24,  48, 27, 48, 68, 48,  23, 44, 48, 24, 69 },
-                {35, 20, 27,  20,  48, 27, 48, 68, 48,  44, 23, 48, 48, 48 },
-                {35, 27, 27,  27,  48, 27, 48, 68, 48,  22, 23, 48, 20, 68 },
-                {35, 68, 48,  48,  48, 27, 48, 48, 48,  23, 21, 48, 22, 20 },
-                {35, 48, 48,  48,  48, 68, 24, 48, 48,  22, 23, 48, 21, 22 },
-                {35, 48, 24,  24,  48, 24, 24, 69, 48,  48, 48, 48, 21, 39 },
-                {35, 48, 69,  24,  48, 24, 24, 24, 20,  48, 20, 20, 24,  9 },
-                {43, 48, 68,  24,  48, 48, 48, 48, 48,  48, 20, 24, 24,  9 },
-                {68, 48, 27,  27,  68, 24, 24, 24, 45,  24, 24, 24, 20,  9 },
-                {48, 48, 68,  24,  24, 24, 42, 32, 32,  32, 32, 32, 32, 12 }
+                {36, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 39},
+                {35, 20, 24, 20, 24, 24, 44, 24, 24, 45, 24, 24, 20, 9},
+                {35, 68, 48, 48, 48, 23, 24, 48, 68, 48, 69, 68, 24, 9},
+                {35, 24, 24, 24, 48, 48, 48, 48, 48, 48, 48, 68, 24, 37},
+                {35, 20, 20, 24, 48, 27, 48, 68, 48, 23, 44, 48, 24, 69},
+                {35, 20, 27, 20, 48, 27, 48, 68, 48, 44, 23, 48, 48, 48},
+                {35, 27, 27, 27, 48, 27, 48, 68, 48, 22, 23, 48, 20, 68},
+                {35, 68, 48, 48, 48, 27, 48, 48, 48, 23, 21, 48, 22, 20},
+                {35, 48, 48, 48, 48, 68, 24, 48, 48, 22, 23, 48, 21, 22},
+                {35, 48, 24, 24, 48, 24, 24, 69, 48, 48, 48, 48, 21, 39},
+                {35, 48, 69, 24, 48, 24, 24, 24, 20, 48, 20, 20, 24, 9},
+                {43, 48, 68, 24, 48, 48, 48, 48, 48, 48, 20, 24, 24, 9},
+                {68, 48, 27, 27, 68, 24, 24, 24, 45, 24, 24, 24, 20, 9},
+                {48, 48, 68, 24, 24, 24, 42, 32, 32, 32, 32, 32, 32, 12}
         };
+
+        for (int row = 0; row < numRows; row++) {
+            for (int col = 0; col < numCols; col++) {
+                //define onde o tile é desenhado
+                float x0,y0;
+                this->calculoDesenhoDiamond(x0,y0,row,col);
+
+                //define a textura de cada tile
+                int idTex = mapa[row][col];
+
+                //define tile caminhavel
+                bool isWalking = (idTex==48);
+
+                //cria o tile
+                Tile *t = new Tile(x0,y0,idTex,isWalking,!isWalking);
+                matrixTiles[row][col] = t;
+            }
+        }
+    }
+
+    void draw(Shader *shaderProgram) {
 
         // Define shaderProgram como o shader a ser utilizado
         shaderProgram->UseProgramShaders();
@@ -133,10 +189,11 @@ public:
 
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
-                //diamond map
+                Tile *t = matrixTiles[row][col];
+
                 float xi;
                 float yi;
-                calculoDesenhoDiamond(xi,yi,row,col);
+                t->getXandYReference(xi,yi);
 
                 modelMatrix = glm::mat4(1);
                 modelMatrix = glm::translate(modelMatrix, glm::vec3(xi, yi, 0.0));
@@ -147,9 +204,8 @@ public:
                       GL_FALSE, glm::value_ptr(modelMatrix));
 
                 //seleciona o tileset a ser desenhado
-                int id_tile = mapa[row][col];
-                tileset->setColumn((int)(id_tile % tileset->columns));
-                tileset->setRow((int)(id_tile / tileset->columns));
+                tileset->setColumn((int)(t->textureId % tileset->columns));
+                tileset->setRow((int)(t->textureId / tileset->columns));
 
                 //passa o tileset selecionado para o shader
                 tileset->passUniformsToShader(shaderProgram);
