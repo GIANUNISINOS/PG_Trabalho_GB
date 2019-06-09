@@ -11,3 +11,6 @@ PROJETO_PG_GA/.DS_Store
 
 
 PROJETO_PG_GA/.idea/workspace.xml
+
+*/.idea/**
+*/cmake-build-debug/**
