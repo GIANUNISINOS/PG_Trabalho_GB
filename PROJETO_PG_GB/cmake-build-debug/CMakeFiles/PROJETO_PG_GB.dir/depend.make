@@ -19,6 +19,7 @@ CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o: ../header/Shader.h
 CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o: ../header/SpriteSheet.h
 CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o: ../header/Texture.h
 CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o: ../header/Tilemap.h
+CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o: ../header/Transformations.h
 CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o: ../header/VerticesObject.h
 CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o: ../source/main.cpp
 CMakeFiles/PROJETO_PG_GB.dir/source/main.cpp.o: /usr/local/include/GL/glew.h
