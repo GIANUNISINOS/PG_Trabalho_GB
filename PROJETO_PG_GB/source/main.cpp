@@ -44,6 +44,7 @@ Shader *shaderProgram;
 GLFWwindow *window;
 Tilemap *tilemap;
 GameObject *car;
+GameObject *fuel;
 
 bool gameIsRunning = true;
 
@@ -77,7 +78,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if(action == GLFW_RELEASE) keys[key] = 0;
 }
 
-void printValues(int rowCar, int colCar, GameObject* car) {
+void printValues(int rowCar, int colCar) {
 	float tileX, tileY;
 	tilemap->calculoDesenhoDiamond(tileX, tileY, rowCar, colCar);
 	printf("\n------------------------------------------------------------------------------------\n");
@@ -99,7 +100,7 @@ void do_a_movement(int a) {
 
 				car->transformations->move(2.0f, 1.0f);
 
-				if(DEBUG) printValues(rowCar + 1, colCar, car);
+				if(DEBUG) printValues(rowCar + 1, colCar);
 			}
             break;
         case DIRECTION_NO:// clicar para cima
@@ -110,7 +111,7 @@ void do_a_movement(int a) {
                 
 				car->transformations->move(-2.0f, -1.0f);
 
-				if (DEBUG) printValues(rowCar - 1, colCar, car);
+				if (DEBUG) printValues(rowCar - 1, colCar);
             }
             break;
         case DIRECTION_NE:// clicar para direita
@@ -121,7 +122,7 @@ void do_a_movement(int a) {
                 
 				car->transformations->move(2.0f, -1.0f);
 
-				if (DEBUG) printValues(rowCar, colCar + 1, car);	
+				if (DEBUG) printValues(rowCar, colCar + 1);
             }
             break;
         case DIRECTION_SO:// clicar para esquerda
@@ -132,7 +133,7 @@ void do_a_movement(int a) {
                 
 				car->transformations->move(-2.0f, 1.0f);
 				
-				if (DEBUG) printValues(rowCar, colCar - 1, car);
+				if (DEBUG) printValues(rowCar, colCar - 1);
 			}
             break;
     }
@@ -250,17 +251,38 @@ int main() {
     //cria objeto carro
     float xCarInitial;
     float yCarInitial;
-    int tilePositionRow = 13;
-    int tilePositionCol = 0;
-    tilemap->calculoDesenhoDiamond(xCarInitial,yCarInitial,tilePositionRow,tilePositionCol);
+    int tilePositionCarRow = 13;
+    int tilePositionCarCol = 0;
+    tilemap->calculoDesenhoDiamond(xCarInitial,yCarInitial,tilePositionCarRow,tilePositionCarCol);
 
     car = new GameObject(
             spritesCar,
             (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
             xCarInitial+(TILE_WIDTH/2),yCarInitial+(TILE_HEIGHT/2),
             0.5f, false,&gameIsRunning,
-            tilePositionRow, tilePositionCol
+            tilePositionCarRow, tilePositionCarCol
             );
+
+
+    //cria objeto sprites de fuel
+    SpriteSheet* spritesFuel =new SpriteSheet("resource/objects/fuel.png",true, 1, 1, 0.93f);
+    spritesCar->setColumn(0);
+    spritesCar->setRow(0);
+
+    //cria objeto combustivel
+    float xFuelInitial;
+    float yFuelInitial;
+    int tilePositionFuelRow = 2;
+    int tilePositionFuelCol = 2;
+    tilemap->calculoDesenhoDiamond(xFuelInitial,yFuelInitial,tilePositionFuelRow,tilePositionFuelCol);
+
+    fuel = new GameObject(
+            spritesFuel,
+            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
+            xFuelInitial+(TILE_WIDTH/2),yFuelInitial+(TILE_HEIGHT/2),
+            0.5f, false,&gameIsRunning,
+            tilePositionFuelRow, tilePositionFuelCol
+    );
 
     // looping do main
 	double previousFrameTime = glfwGetTime();
@@ -278,6 +300,7 @@ int main() {
         tilemap->draw(shaderProgram);
 
         car->draw(shaderProgram);
+        fuel->draw(shaderProgram);
 
 		//Troca o sprite a 10 FPS
 		double currentSeconds = glfwGetTime();
