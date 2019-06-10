@@ -263,6 +263,7 @@ int main() {
             );
 
     // looping do main
+	double previousFrameTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -278,7 +279,15 @@ int main() {
 
         car->draw(shaderProgram);
 
-        keboard_reaction();
+		//Troca o sprite a 10 FPS
+		double currentSeconds = glfwGetTime();
+		double elapsedSeconds = currentSeconds - previousFrameTime;
+		if (elapsedSeconds > 0.01f) {
+			keboard_reaction();
+			previousFrameTime = currentSeconds;
+		}
+		//keboard_reaction();
+        
         //fila eventos 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
