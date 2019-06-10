@@ -1,3 +1,5 @@
+#define DEBUG  true
+
 // tamanho do mapa
 #define ROWS 14
 #define COLS 14
@@ -33,7 +35,7 @@
 	#include "../header/Layer.h";
 	#include "../header/SpriteSheet.h";
 	#include "../header/VerticesObject.h";
-	#include "../header/Position.h";
+	#include "../header/Transformations.h";
 	#include "../header/GameObject.h";
 	#include "../header/Tilemap.h";
 #endif
@@ -75,6 +77,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if(action == GLFW_RELEASE) keys[key] = 0;
 }
 
+void printValues(int rowCar, int colCar, GameObject* car) {
+	float tileX, tileY;
+	tilemap->calculoDesenhoDiamond(tileX, tileY, rowCar, colCar);
+	printf("\n------------------------------------------------------------------------------------\n");
+	printf("tileX: %5.5f, tileY: %5.5f, rowcar: %d, colCar: %d\n", tileX, tileY, rowCar, colCar);
+	printf("carX: %5.5f, carY: %5.5f\n", car->transformations->xCenter - TILE_WIDTH/2.0, car->transformations->yCenter - TILE_HEIGHT/2.0);
+	printf("------------------------------------------------------------------------------------\n");
+}
+
 void do_a_movement(int a) {
     int colCar = car->transformations->tilePositionCol;
     int rowCar = car->transformations->tilePositionRow;
@@ -85,15 +96,21 @@ void do_a_movement(int a) {
                 car->transformations->tilePositionRow++;
                 car->sprites->setRow(1);
                 car->sprites->setColumn(1);
-                car->transformations->move(TILE_WIDTH/2.0f, TILE_HEIGHT/2.0f);
-            }
+
+				car->transformations->move(2.0f, 1.0f);
+
+				if(DEBUG) printValues(rowCar + 1, colCar, car);
+			}
             break;
         case DIRECTION_NO:// clicar para cima
             if (rowCar > 0 && tilemap->matrixTiles[rowCar-1][colCar]->isWalking ) {
                 car->transformations->tilePositionRow--;
                 car->sprites->setRow(0);
                 car->sprites->setColumn(0);
-                car->transformations->move(-TILE_WIDTH/2.0f, -TILE_HEIGHT/2.0f);
+                
+				car->transformations->move(-2.0f, -1.0f);
+
+				if (DEBUG) printValues(rowCar - 1, colCar, car);
             }
             break;
         case DIRECTION_NE:// clicar para direita
@@ -101,7 +118,10 @@ void do_a_movement(int a) {
                 car->transformations->tilePositionCol++;
                 car->sprites->setRow(0);
                 car->sprites->setColumn(1);
-                car->transformations->move(TILE_WIDTH / 2.0f, -TILE_HEIGHT / 2.0f);
+                
+				car->transformations->move(2.0f, -1.0f);
+
+				if (DEBUG) printValues(rowCar, colCar + 1, car);	
             }
             break;
         case DIRECTION_SO:// clicar para esquerda
@@ -109,28 +129,63 @@ void do_a_movement(int a) {
                 car->transformations->tilePositionCol--;
                 car->sprites->setRow(1);
                 car->sprites->setColumn(0);
-                car->transformations->move(-TILE_WIDTH / 2.0f, TILE_HEIGHT / 2.0f);
-            }
+                
+				car->transformations->move(-2.0f, 1.0f);
+				
+				if (DEBUG) printValues(rowCar, colCar - 1, car);
+			}
             break;
     }
 
 }
 
 void keboard_reaction(){
-    if (keys[GLFW_KEY_DOWN] == 1) {
-        do_a_movement(DIRECTION_SE);
-    }
-    else if (keys[GLFW_KEY_UP] == 1) {
-        do_a_movement(DIRECTION_NO);
-    }
-    else if (keys[GLFW_KEY_RIGHT] == 1) {
-        do_a_movement(DIRECTION_NE);
-    }
-    else if (keys[GLFW_KEY_LEFT] == 1) {
-        do_a_movement(DIRECTION_SO);
-    }
-}
 
+	/*
+		Se o carro estiver fora da sua posição
+	*/
+	int colCar = car->transformations->tilePositionCol;
+	int rowCar = car->transformations->tilePositionRow;
+
+	float correctX, correctY;
+	tilemap->calculoDesenhoDiamond(correctX, correctY, rowCar, colCar);
+	
+	float actualX = car->transformations->xCenter - TILE_WIDTH / 2.0;
+	float actualY = car->transformations->yCenter - TILE_HEIGHT / 2.0;
+
+	float differenceX = correctX - actualX;
+	float differenceY = correctY - actualY;
+
+	if (differenceX == 0 && differenceY == 0) {
+		if (keys[GLFW_KEY_DOWN] == 1) {
+			do_a_movement(DIRECTION_SE);
+		}
+		else if (keys[GLFW_KEY_UP] == 1) {
+			do_a_movement(DIRECTION_NO);
+		}
+		else if (keys[GLFW_KEY_RIGHT] == 1) {
+			do_a_movement(DIRECTION_NE);
+		}
+		else if (keys[GLFW_KEY_LEFT] == 1) {
+			do_a_movement(DIRECTION_SO);
+		}
+	}
+	else {
+		float x = 0.0f, y = 0.0f;
+		if (differenceX > 0) {
+			x = 1;
+		}
+		else if (differenceX < 0) {
+			x = -1.0f;
+		}
+		if (differenceY > 0) {
+			y = 0.5f;
+		} else if (differenceY < 0) {
+			y = -0.5f;
+		}
+		car->transformations->move(x, y);
+	}
+}
 
 
 GLFWwindow* createWindow() {
