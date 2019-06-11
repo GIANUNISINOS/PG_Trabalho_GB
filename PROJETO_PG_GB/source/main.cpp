@@ -174,15 +174,15 @@ void keboard_reaction(){
 	else {
 		float x = 0.0f, y = 0.0f;
 		if (differenceX > 0) {
-			x = 1;
+			x = 2.0f;
 		}
 		else if (differenceX < 0) {
-			x = -1.0f;
+			x = -2.0f;
 		}
 		if (differenceY > 0) {
-			y = 0.5f;
+			y = 1.0f;
 		} else if (differenceY < 0) {
-			y = -0.5f;
+			y = -1.0f;
 		}
 		car->transformations->move(x, y);
 	}
@@ -266,8 +266,8 @@ int main() {
 
     //cria objeto sprites de fuel
     SpriteSheet* spritesFuel =new SpriteSheet("resource/objects/fuel.png",true, 1, 1, 0.93f);
-    spritesCar->setColumn(0);
-    spritesCar->setRow(0);
+    spritesFuel->setColumn(0);
+    spritesFuel->setRow(0);
 
     //cria objeto combustivel
     float xFuelInitial;
@@ -299,17 +299,19 @@ int main() {
 		//desenha tilemap
         tilemap->draw(shaderProgram);
 
+        //desenha
         car->draw(shaderProgram);
+
+        //desenha combustivel
         fuel->draw(shaderProgram);
 
-		//Troca o sprite a 10 FPS
+		//controla o uso de teclas por segundo
 		double currentSeconds = glfwGetTime();
 		double elapsedSeconds = currentSeconds - previousFrameTime;
-		if (elapsedSeconds > 0.01f) {
+		if (elapsedSeconds > 0.05f) {
 			keboard_reaction();
 			previousFrameTime = currentSeconds;
 		}
-		//keboard_reaction();
         
         //fila eventos 
 		glfwPollEvents();
