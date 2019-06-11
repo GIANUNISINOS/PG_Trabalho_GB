@@ -266,8 +266,8 @@ int main() {
 
     //cria objeto sprites de fuel
     SpriteSheet* spritesFuel =new SpriteSheet("resource/objects/fuel.png",true, 1, 1, 0.93f);
-    spritesCar->setColumn(0);
-    spritesCar->setRow(0);
+    spritesFuel->setColumn(0);
+    spritesFuel->setRow(0);
 
     //cria objeto combustivel
     float xFuelInitial;
@@ -299,7 +299,10 @@ int main() {
 		//desenha tilemap
         tilemap->draw(shaderProgram);
 
+        //desenha
         car->draw(shaderProgram);
+
+        //desenha combustivel
         fuel->draw(shaderProgram);
 
 		double currentSeconds = glfwGetTime();
@@ -308,10 +311,10 @@ int main() {
 
 		double elapsedSeconds = currentSeconds - previousFrameTime;
 		if (elapsedSeconds > speed) {
+
 			keboard_reaction();
 			previousFrameTime = currentSeconds;
 		}
-		//keboard_reaction();
         
         //fila eventos 
 		glfwPollEvents();
