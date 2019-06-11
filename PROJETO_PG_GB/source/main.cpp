@@ -174,15 +174,15 @@ void keboard_reaction(){
 	else {
 		float x = 0.0f, y = 0.0f;
 		if (differenceX > 0) {
-			x = 1;
+			x = 2.0f;
 		}
 		else if (differenceX < 0) {
-			x = -1.0f;
+			x = -2.0f;
 		}
 		if (differenceY > 0) {
-			y = 0.5f;
+			y = 1.0f;
 		} else if (differenceY < 0) {
-			y = -0.5f;
+			y = -1.0f;
 		}
 		car->transformations->move(x, y);
 	}
@@ -302,10 +302,12 @@ int main() {
         car->draw(shaderProgram);
         fuel->draw(shaderProgram);
 
-		//Troca o sprite a 10 FPS
 		double currentSeconds = glfwGetTime();
+		float speed = 0.05f;
+		if (keys[GLFW_KEY_SPACE] == 1) speed = 0.01f;
+
 		double elapsedSeconds = currentSeconds - previousFrameTime;
-		if (elapsedSeconds > 0.01f) {
+		if (elapsedSeconds > speed) {
 			keboard_reaction();
 			previousFrameTime = currentSeconds;
 		}
