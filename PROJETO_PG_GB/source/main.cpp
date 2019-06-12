@@ -44,6 +44,7 @@ Shader *shaderProgram;
 GLFWwindow *window;
 Tilemap *tilemap;
 GameObject *car;
+bool carIsStop = true;
 GameObject *fuel;
 
 bool gameIsRunning = true;
@@ -60,14 +61,10 @@ int RESIZED_HEIGHT = HEIGHT;
 int keys[1024];
 
 //Define acoes do redimensionamento da tela
-void window_size_callback(GLFWwindow* window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
     RESIZED_WIDTH = width;
     RESIZED_HEIGHT = height;
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
 }
 
 /*
@@ -151,8 +148,22 @@ void do_a_movement(int a) {
 
 }
 
-void keboard_reaction(){
+void keboard_reaction() {
+    if (keys[GLFW_KEY_DOWN] == 1) {
+        do_a_movement(DIRECTION_SE);
+    }
+    else if (keys[GLFW_KEY_UP] == 1) {
+        do_a_movement(DIRECTION_NO);
+    }
+    else if (keys[GLFW_KEY_RIGHT] == 1) {
+        do_a_movement(DIRECTION_NE);
+    }
+    else if (keys[GLFW_KEY_LEFT] == 1) {
+        do_a_movement(DIRECTION_SO);
+    }
+}
 
+void car_reaction() {
 	/*
 		Se o carro estiver fora da sua posição
 	*/
@@ -168,20 +179,10 @@ void keboard_reaction(){
 	float differenceX = correctX - actualX;
 	float differenceY = correctY - actualY;
 
-	if (differenceX == 0 && differenceY == 0) {
-		if (keys[GLFW_KEY_DOWN] == 1) {
-			do_a_movement(DIRECTION_SE);
-		}
-		else if (keys[GLFW_KEY_UP] == 1) {
-			do_a_movement(DIRECTION_NO);
-		}
-		else if (keys[GLFW_KEY_RIGHT] == 1) {
-			do_a_movement(DIRECTION_NE);
-		}
-		else if (keys[GLFW_KEY_LEFT] == 1) {
-			do_a_movement(DIRECTION_SO);
-		}
-	}
+	carIsStop=(differenceX == 0 && differenceY == 0);
+
+	if (carIsStop)
+        keboard_reaction();
 	else {
 		float x = 0.0f, y = 0.0f;
 		if (differenceX > 0) {
@@ -199,6 +200,49 @@ void keboard_reaction(){
 	}
 }
 
+void clique_reaction(int rowCliked, int colCliked){
+    int colCar = car->transformations->tilePositionCol;
+    int rowCar = car->transformations->tilePositionRow;
+
+    int diffRows = rowCliked - rowCar;
+    int diffCols = colCliked - colCar;
+
+    if (abs(diffRows) > 1 || abs(diffCols) > 1)
+        return;
+
+    if(diffRows == -1 && diffCols == 0){ //esquerda cima
+        do_a_movement(DIRECTION_NO);
+    } else if(diffRows == 0 && diffCols == 1) { //direita cima
+        do_a_movement(DIRECTION_NE);
+    } else if(diffRows == 0 && diffCols == -1) { //esq baixo
+        do_a_movement(DIRECTION_SO);
+    } else if(diffRows == 1 && diffCols == 0) { //direita baixo
+        do_a_movement(DIRECTION_SE);
+    }
+}
+
+/*
+Define acoes do mouse
+*/
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+    if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+
+        //Realiza a proporcao do clique para projecao original
+        xpos = WIDTH * xpos / RESIZED_WIDTH;
+        ypos = HEIGHT * ypos / RESIZED_HEIGHT;
+
+        int rowClick,colClick;
+        tilemap->calculoCliqueDiamond((float)xpos,(float)ypos,rowClick,colClick);
+
+        if(DEBUG) printf("\nRow: %d", rowClick);
+        if(DEBUG) printf("\nColumn: %d\n", colClick);
+
+        if(carIsStop)
+            clique_reaction(rowClick,colClick);
+    }
+}
 
 GLFWwindow* createWindow() {
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to survive thirty seconds!", NULL, NULL);
@@ -245,11 +289,10 @@ int main() {
 	glfwSetKeyCallback(window, key_callback);
 
 	// esta para quando redimensionar a tela
-	glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // esta para quando clicar uma tecla
-    glfwSetKeyCallback(window, key_callback);
+    // esta para quando clicar com o mouse
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     //instancia do tilemap
     tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
@@ -327,7 +370,7 @@ int main() {
 
 		double elapsedSeconds = currentSeconds - previousFrameTime;
 		if (elapsedSeconds > speed) {
-			keboard_reaction();
+			car_reaction();
 			previousFrameTime = currentSeconds;
 		}
         
