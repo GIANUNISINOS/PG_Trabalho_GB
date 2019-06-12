@@ -84,9 +84,9 @@ void printValues(int rowCar, int colCar) {
 	printf("------------------------------------------------------------------------------------\n");
 }
 
-void do_a_movement(int a) {
-    int colCar = car->transformations->tilePositionCol;
-    int rowCar = car->transformations->tilePositionRow;
+void startCarMove(int a) {
+    int rowCar, colCar;
+    car->transformations->getPositionTile(rowCar, colCar);
 
     switch (a) {
         case DIRECTION_SE: // clicar para baixo
@@ -137,27 +137,27 @@ void do_a_movement(int a) {
 
 }
 
-void keboard_reaction() {
+void keboardReaction() {
     if (keys[GLFW_KEY_DOWN] == 1) {
-        do_a_movement(DIRECTION_SE);
+        startCarMove(DIRECTION_SE);
     }
     else if (keys[GLFW_KEY_UP] == 1) {
-        do_a_movement(DIRECTION_NO);
+        startCarMove(DIRECTION_NO);
     }
     else if (keys[GLFW_KEY_RIGHT] == 1) {
-        do_a_movement(DIRECTION_NE);
+        startCarMove(DIRECTION_NE);
     }
     else if (keys[GLFW_KEY_LEFT] == 1) {
-        do_a_movement(DIRECTION_SO);
+        startCarMove(DIRECTION_SO);
     }
 }
 
-void car_reaction() {
+void carReaction() {
 	/*
 		Se o carro estiver fora da sua posição
 	*/
-	int colCar = car->transformations->tilePositionCol;
-	int rowCar = car->transformations->tilePositionRow;
+    int rowCar, colCar;
+    car->transformations->getPositionTile(rowCar, colCar);
 
 	float correctX, correctY;
 	tilemap->calculoDesenhoDiamond(correctX, correctY, rowCar, colCar);
@@ -171,7 +171,7 @@ void car_reaction() {
 	carIsStop=(differenceX == 0 && differenceY == 0);
 
 	if (carIsStop)
-        keboard_reaction();
+        keboardReaction();
 	else {
 		float x = 0.0f, y = 0.0f;
 		if (differenceX > 0) {
@@ -189,7 +189,7 @@ void car_reaction() {
 	}
 }
 
-void clique_reaction(int rowCliked, int colCliked){
+void clickReaction(int rowCliked, int colCliked){
     int colCar = car->transformations->tilePositionCol;
     int rowCar = car->transformations->tilePositionRow;
 
@@ -200,13 +200,84 @@ void clique_reaction(int rowCliked, int colCliked){
         return;
 
     if(diffRows == -1 && diffCols == 0){ //esquerda cima
-        do_a_movement(DIRECTION_NO);
+        startCarMove(DIRECTION_NO);
     } else if(diffRows == 0 && diffCols == 1) { //direita cima
-        do_a_movement(DIRECTION_NE);
+        startCarMove(DIRECTION_NE);
     } else if(diffRows == 0 && diffCols == -1) { //esq baixo
-        do_a_movement(DIRECTION_SO);
+        startCarMove(DIRECTION_SO);
     } else if(diffRows == 1 && diffCols == 0) { //direita baixo
-        do_a_movement(DIRECTION_SE);
+        startCarMove(DIRECTION_SE);
+    }
+}
+
+
+bool testPointCollision(float RefenceX,float RefenceY, float Bx,float By, float Cx,float Cy, float Px, float Py){
+    float ABx = Bx-RefenceX;
+    float ABy = By-RefenceY;
+    float ABmodule = sqrt(pow(ABx,2)+pow(ABy,2));
+
+    float normalABx = ABx / ABmodule;
+    float normalABy = ABy / ABmodule;
+
+    float ACx = Cx-RefenceX;
+    float ACy = Cy-RefenceY;
+    float ACmodule = sqrt(pow(ACx,2)+pow(ACy,2));
+
+    float normalACx = ACx / ACmodule;
+    float normalACy = ACy / ACmodule;
+
+    float APx = Px-RefenceX;
+    float APy = Py-RefenceY;
+    float APmodule = sqrt(pow(APx,2)+pow(APy,2));
+
+    float normalAPx = APx / APmodule;
+    float normalAPy = APy / APmodule;
+
+    float theta = acos(normalABx * normalAPx + normalABy * normalAPy);
+    float alpha = acos(normalABx * normalACx + normalABy * normalACy);
+    float betha = acos(normalACx * normalAPx + normalACy * normalAPy);
+
+    // bool collide = alpha == (theta + betha);
+    bool collide = 0.001>abs(alpha - (theta + betha));
+    return collide;
+}
+
+void mouseMap(double xPos,double yPos) {
+    bool isClickValid = false;
+    int rowClick, columnClick;
+    tilemap->calculoCliqueDiamond(xPos, yPos, rowClick, columnClick);
+
+    if (rowClick < 0 || columnClick < 0 || columnClick >= COLS || rowClick >= ROWS)
+        return;
+
+    Tile *tile = tilemap->matrixTiles[rowClick][columnClick];
+
+
+
+
+    if (testPointCollision(tile->Ax, tile->Ay, tile->Bx, tile->By, tile->Cx, tile->Cy, xPos, yPos))
+        isClickValid = true;
+
+    if(isClickValid==true){
+        // caso debug ativo printa linha e coluna clicada
+        if (DEBUG) {
+            printf("\nxPos: %f", xPos);
+            printf("\nyPos: %f", yPos);
+            printf("\nRow: %d", rowClick);
+            printf("\nColumn: %d\n", columnClick);
+            printf("\nleftPoint x %f", tile->Ax);
+            printf("\nleftPoint y %f\n", tile->Ay);
+            printf("\ntopPointX x %f", tile->Bx);
+            printf("\ntopPointY y %f\n", tile->By);
+            printf("\nbottomPointX x %f", tile->Cx);
+            printf("\nbottomPointY y %f\n", tile->Cy);
+            printf("\nrightPointX x %f", tile->Dx);
+            printf("\nrightPointY y %f\n", tile->Dy);
+        }
+        if(DEBUG) printf("\nValid Clicked Row: %d", rowClick);
+        if(DEBUG) printf("\nValid Clicked Column: %d\n", columnClick);
+        if(carIsStop)
+            clickReaction(rowClick, columnClick);
     }
 }
 
@@ -215,21 +286,14 @@ Define acoes do mouse
 */
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
+        double xPos, yPos;
+        glfwGetCursorPos(window, &xPos, &yPos);
 
         //Realiza a proporcao do clique para projecao original
-        xpos = WIDTH * xpos / RESIZED_WIDTH;
-        ypos = HEIGHT * ypos / RESIZED_HEIGHT;
+        xPos = WIDTH * xPos / RESIZED_WIDTH;
+        yPos = HEIGHT * yPos / RESIZED_HEIGHT;
 
-        int rowClick,colClick;
-        tilemap->calculoCliqueDiamond((float)xpos,(float)ypos,rowClick,colClick);
-
-        if(DEBUG) printf("\nRow: %d", rowClick);
-        if(DEBUG) printf("\nColumn: %d\n", colClick);
-
-        if(carIsStop)
-            clique_reaction(rowClick,colClick);
+        mouseMap(xPos, yPos);
     }
 }
 
@@ -359,7 +423,7 @@ int main() {
 
 		double elapsedSeconds = currentSeconds - previousFrameTime;
 		if (elapsedSeconds > speed) {
-			car_reaction();
+            carReaction();
 			previousFrameTime = currentSeconds;
 		}
         

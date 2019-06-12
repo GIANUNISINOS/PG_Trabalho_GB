@@ -49,6 +49,12 @@ public:
 		transformations = matrix_translaction * matrix_rotation * matrix_scala;
 	}
 
+	void getPositionTile(int &row, int &col){
+	    row = tilePositionRow;
+        col = tilePositionCol;
+	}
+
+
 	~Transformations() {};
 };
 
