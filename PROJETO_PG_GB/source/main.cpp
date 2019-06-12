@@ -84,17 +84,6 @@ void printValues(int rowCar, int colCar) {
 	printf("------------------------------------------------------------------------------------\n");
 }
 
-bool testCollisionTwoObjects(GameObject *o1, GameObject *o2){
-    float difInX = abs(o1->transformations->xCenter - o2->transformations->xCenter);
-    float difInY = abs(o1->transformations->yCenter - o2->transformations->xCenter);
-
-    if(difInX<0.01f  &&  difInX<0.01f){
-        return true;
-    } else {
-        return false;
-    }
-}
-
 void do_a_movement(int a) {
     int colCar = car->transformations->tilePositionCol;
     int rowCar = car->transformations->tilePositionRow;
@@ -360,7 +349,7 @@ int main() {
         fuel->draw(shaderProgram);
 
         //testa se pegou o combustivel
-        if(testCollisionTwoObjects(car,fuel)){
+        if(car->testCollisionWithAnotherObject(fuel)){
             fuel->sprites->z = 2.00f;
         }
 

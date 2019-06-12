@@ -105,16 +105,18 @@ public:
 		int row = this->transformations->tilePositionRow;
 		int col = this->transformations->tilePositionCol;
 
-		this->transformations->xCenter;
-		this->transformations->yCenter;
-		/*
-		
-		x = row * (this->tileWidth / 2.0f) + col * (this->tileWidth / 2.0f);
-        y = row * (this->tileHeight / 2.0f) - col * (this->tileHeight / 2.0f) + this->sum_tiles_heigth / 2.0f -
-            (this->tileHeight / 2.0f);
-		
-		*/
 	}
+
+    bool testCollisionWithAnotherObject(GameObject *another){
+        float difInX = abs(this->transformations->xCenter - another->transformations->xCenter);
+        float difInY = abs(this->transformations->yCenter - another->transformations->xCenter);
+
+        if(difInX<0.01f  &&  difInX<0.01f){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 	virtual ~GameObject();
 };
