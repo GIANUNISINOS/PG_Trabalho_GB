@@ -277,7 +277,7 @@ int main() {
         testCarColisionWithObjects();
 
 		//testa colisao com o mapa
-
+		if (car->isDead) printf("\nIS DED\n");
 
 		double currentSeconds = glfwGetTime();
 		float speed = 0.05f;

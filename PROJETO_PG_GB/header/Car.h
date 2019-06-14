@@ -6,6 +6,7 @@ class Car :
 public:
 	Tilemap* tilemap;
 	int* keys;
+	bool isDead = false;
 
 	Car(Tilemap* tilemap, int* keys, SpriteSheet* spritesParam, float width, float height, float initialPosX, float initialPosY, float speedParam, bool invertX, bool *gameIsRunning, int tilePositionRow, int tilePositionCol)
 		: GameObject(spritesParam, width, height, initialPosX, initialPosY, speedParam, invertX, gameIsRunning, tilePositionRow, tilePositionCol) {
@@ -104,46 +105,62 @@ public:
 
 		switch (direction) {
 		case DIRECTION_SE: // clicar para baixo
-			if (tileRow < (ROWS - 1) && tilemap->matrixTiles[tileRow + 1][tileCol]->isWalking) {
-				this->tileRow++;
-				this->sprites->setRow(1);
-				this->sprites->setColumn(1);
+			if (tileRow < (ROWS - 1)) {
+				if (tilemap->matrixTiles[tileRow + 1][tileCol]->isMortal) {
+					this->isDead = true;
+				}
+				if (tilemap->matrixTiles[tileRow + 1][tileCol]->isWalking){
+					this->tileRow++;
+					this->sprites->setRow(1);
+					this->sprites->setColumn(1);
 
-				this->transformations->move(2.0f, 1.0f);
-
-
+					this->transformations->move(2.0f, 1.0f);
+				}
+				
 			}
 			break;
 		case DIRECTION_NO:// clicar para cima
-			if (tileRow > 0 && tilemap->matrixTiles[tileRow - 1][tileCol]->isWalking) {
-				this->tileRow--;
-				this->sprites->setRow(0);
-				this->sprites->setColumn(0);
+			if (tileRow > 0) {
+				if (tilemap->matrixTiles[tileRow - 1][tileCol]->isMortal) {
+					this->isDead = true;
+				}
+				if (tilemap->matrixTiles[tileRow - 1][tileCol]->isWalking) {
+					this->tileRow--;
+					this->sprites->setRow(0);
+					this->sprites->setColumn(0);
 
-				this->transformations->move(-2.0f, -1.0f);
-
+					this->transformations->move(-2.0f, -1.0f);
+				}
 
 			}
 			break;
 		case DIRECTION_NE:// clicar para direita
-			if (tileCol < (COLS - 1) && tilemap->matrixTiles[tileRow][tileCol + 1]->isWalking) {
-				this->tileCol++;
-				this->sprites->setRow(0);
-				this->sprites->setColumn(1);
+			if (tileCol < (COLS - 1)) {
+				if (tilemap->matrixTiles[tileRow][tileCol + 1]->isMortal) {
+					this->isDead = true;
+				}
+				if (tilemap->matrixTiles[tileRow][tileCol + 1]->isWalking) {
+					this->tileCol++;
+					this->sprites->setRow(0);
+					this->sprites->setColumn(1);
 
-				this->transformations->move(2.0f, -1.0f);
-
+					this->transformations->move(2.0f, -1.0f);
+				}
 
 			}
 			break;
 		case DIRECTION_SO:// clicar para esquerda
-			if (tileCol > 0 && tilemap->matrixTiles[tileRow][tileCol - 1]->isWalking) {
-				this->tileCol--;
-				this->sprites->setRow(1);
-				this->sprites->setColumn(0);
+			if (tileCol > 0) {
+				if (tilemap->matrixTiles[tileRow][tileCol - 1]->isMortal) {
+					this->isDead = true;
+				}
+				if (tilemap->matrixTiles[tileRow][tileCol - 1]->isWalking) {
+					this->tileCol--;
+					this->sprites->setRow(1);
+					this->sprites->setColumn(0);
 
-				this->transformations->move(-2.0f, 1.0f);
-
+					this->transformations->move(-2.0f, 1.0f);
+				}
 			}
 			break;
 		}

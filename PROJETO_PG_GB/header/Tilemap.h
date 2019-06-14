@@ -116,9 +116,9 @@ public:
 
                 //define tile caminhavel
                 bool isWalking = (idTex==48);
-
+				bool isMortal = (idTex==68);
                 //cria o tile
-                Tile *t = new Tile(x0,y0,idTex,isWalking,!isWalking);
+                Tile *t = new Tile(x0,y0,idTex,isWalking,isMortal);
                 matrixTiles[row][col] = t;
             }
         }
