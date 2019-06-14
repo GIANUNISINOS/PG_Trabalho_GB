@@ -20,7 +20,8 @@
 
 #define Z_TILEMAP 0.53
 #define Z_FUEL 0.54
-#define Z_CAR 0.55
+#define Z_FLAG 0.55
+#define Z_CAR 0.56
 
 #ifdef __APPLE__
     #include "header/Includes.h";
@@ -59,6 +60,8 @@ bool carIsStop = true;
 SpriteSheet* spritesFuel;
 GameObject *fuel;
 
+SpriteSheet* spritesFlag;
+vector<GameObject *> flags;
 
 //Atributos janela
 const int WIDTH = ROWS*TILE_WIDTH;
@@ -280,8 +283,6 @@ void createCarObject(){
 void createFuelObject(){
     //cria objeto sprites de fuel
     spritesFuel =new SpriteSheet("resource/objects/fuel.png",true, 1, 1, (float) Z_FUEL);
-    spritesFuel->setColumn(0);
-    spritesFuel->setRow(0);
 
     //cria objeto combustivel
     float xFuelInitial;
@@ -299,6 +300,35 @@ void createFuelObject(){
     );
 }
 
+void createFlagsObjects(){
+    //cria objeto sprites de flag
+    spritesFlag =new SpriteSheet("resource/objects/flag.png",true, 1, 1, (float) Z_FLAG);
+
+    int tilePositionFlagRow[] = {3,11,11,2,7};
+    int tilePositionFlagCol[] = {10,9,4,7,6};
+
+    for (int i =0; i < 5; i++){
+        //cria objetos flags
+        float xFlagInitial;
+        float yFlagInitial;
+        tilemap->calculoDesenhoDiamond(xFlagInitial,yFlagInitial,tilePositionFlagRow[i],tilePositionFlagCol[i]);
+        flags.push_back(
+            new GameObject(
+                    spritesFlag,
+                    (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
+                    xFlagInitial+(TILE_WIDTH/2),yFlagInitial+(TILE_HEIGHT/2),
+                    0.5f, false, &gameIsRunning,
+                    tilePositionFlagRow[i], tilePositionFlagCol[i]
+            )
+        );
+    }
+}
+
+void drawAllFlags(){
+    for (int i =0; i < 5; i++) {
+        flags[i]->draw(shaderProgram);
+    }
+}
 
 int main() {
 	if (!glfwInit()) {
@@ -348,6 +378,9 @@ int main() {
     //cria objeto combustivel
     createFuelObject();
 
+    //cria todas bandeiras
+    createFlagsObjects();
+
     // looping do main
 	double previousFrameTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
@@ -368,6 +401,9 @@ int main() {
 
         //desenha combustivel
         fuel->draw(shaderProgram);
+
+        //desenha all flags
+        drawAllFlags();
 
         //testa se pegou o combustivel
         if(car->testCollisionWithAnotherObject(fuel)){
