@@ -16,6 +16,7 @@ add_executable(PROJETO_PG_GB
         header/VerticesObject.h
         header/Transformations.h
         header/GameObject.h
+        header/Tile.h
         header/Tilemap.h
         )
 
