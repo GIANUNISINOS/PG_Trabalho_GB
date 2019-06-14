@@ -13,9 +13,7 @@ public:
 
     Tilemap(float tileWidth, float tileHeight, int numRows, int numCols ){
         this->tileset = new SpriteSheet("resource/mapa/seasons_tiles - resize.png",true, 8, 12, -0.10f);
-        //this->tileset = new SpriteSheet("resource/tileset.png",true, 64, 48, -0.10f);
-        //this->tileset = new SpriteSheet("resource/warrior.png",true, 8, 2, -0.10f);
-        //this->tileset = new SpriteSheet("resource/Terrain_Tileset.png",true, 6, 1, -0.10f);
+
         this->numRows = numRows;
         this->numCols = numCols;
 
