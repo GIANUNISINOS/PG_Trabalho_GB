@@ -27,6 +27,7 @@
     #include "header/VerticesObject.h";
 	#include "header/Transformations.h";
 	#include "header/GameObject.h";
+    #include "header/Tile.h";
     #include "header/Tilemap.h";
 #elif _WIN64
 	#include "../header/Includes.h";
@@ -209,7 +210,6 @@ void clickReaction(int rowCliked, int colCliked){
         startCarMove(DIRECTION_SE);
     }
 }
-
 
 bool testPointCollision(float RefenceX,float RefenceY, float Bx,float By, float Cx,float Cy, float Px, float Py){
     float ABx = Bx-RefenceX;
@@ -434,6 +434,8 @@ int main() {
     // encerra contexto GL e outros recursos da GLFW
     glfwTerminate();
 
+	delete spritesCar;
+	delete spritesFuel;
+
     return 0;
 }
-
