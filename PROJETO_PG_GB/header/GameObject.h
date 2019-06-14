@@ -109,9 +109,9 @@ public:
 
     bool testCollisionWithAnotherObject(GameObject *another){
         float difInX = abs(this->transformations->xCenter - another->transformations->xCenter);
-        float difInY = abs(this->transformations->yCenter - another->transformations->xCenter);
+        float difInY = abs(this->transformations->yCenter - another->transformations->yCenter);
 
-        if(difInX<0.01f  &&  difInX<0.01f){
+        if(difInX<10.0f  &&  difInY<10.0f){
             return true;
         } else {
             return false;

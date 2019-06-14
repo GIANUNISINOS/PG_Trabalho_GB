@@ -37,7 +37,7 @@ bool carIsStop = true;
 SpriteSheet* spritesFuel;
 GameObject *fuel;
 
-SpriteSheet* spritesFlag;
+vector<SpriteSheet*> spritesFlags;
 vector<GameObject *> flags;
 
 //Atributos janela
@@ -278,20 +278,24 @@ void createFuelObject(){
 }
 
 void createFlagsObjects(){
-    //cria objeto sprites de flag
-    spritesFlag =new SpriteSheet("resource/objects/flag.png",true, 1, 1, (float) Z_FLAG);
-
     int tilePositionFlagRow[] = {3,11,11,2,7};
     int tilePositionFlagCol[] = {10,9,4,7,6};
 
     for (int i =0; i < 5; i++){
+        float z = (float) (Z_FLAG + (i * 0.01));
+
+        //cria objeto sprites de flag
+        spritesFlags.push_back(
+                new SpriteSheet("resource/objects/flag.png",true, 1, 1, z)
+        );
+
         //cria objetos flags
         float xFlagInitial;
         float yFlagInitial;
         tilemap->calculoDesenhoDiamond(xFlagInitial,yFlagInitial,tilePositionFlagRow[i],tilePositionFlagCol[i]);
         flags.push_back(
             new GameObject(
-                    spritesFlag,
+                    spritesFlags[i],
                     (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
                     xFlagInitial+(TILE_WIDTH/2),yFlagInitial+(TILE_HEIGHT/2),
                     0.5f, false, &gameIsRunning,
@@ -306,6 +310,21 @@ void drawAllFlags(){
         flags[i]->draw(shaderProgram);
     }
 }
+
+void testCarColisionWithObjects(){
+    //testa se pegou o combustivel
+    if(car->testCollisionWithAnotherObject(fuel)){
+        fuel->sprites->z = Z_OUT_OF_SCREEN;
+    }
+
+    //testa se pegou flags
+    for (int i = 0; i < 5; i++) {
+        if(car->testCollisionWithAnotherObject(flags[i])) {
+            flags[i]->sprites->z = Z_OUT_OF_SCREEN;
+        }
+    }
+}
+
 
 int main() {
 	if (!glfwInit()) {
@@ -358,6 +377,8 @@ int main() {
     //cria todas bandeiras
     createFlagsObjects();
 
+
+
     // looping do main
 	double previousFrameTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
@@ -382,10 +403,8 @@ int main() {
         //desenha all flags
         drawAllFlags();
 
-        //testa se pegou o combustivel
-        if(car->testCollisionWithAnotherObject(fuel)){
-            fuel->sprites->z = 2.00f;
-        }
+        //testa colisao do carro com Objetos
+        testCarColisionWithObjects();
 
 		double currentSeconds = glfwGetTime();
 		float speed = 0.05f;
