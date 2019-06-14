@@ -5,20 +5,14 @@ public:
 	float xCenter;
 	float yCenter;
 
-    int tilePositionRow;
-    int tilePositionCol;
-
 	glm::mat4 matrix_translaction;
 	glm::mat4 matrix_rotation;
 	glm::mat4 matrix_scala;
 	glm::mat4 transformations;
 
-	Transformations(float initialPosX, float initialPosY, int tilePositionRow, int tilePositionCol) {
+	Transformations(float initialPosX, float initialPosY) {
 		this->xCenter = 0.0f;
         this->yCenter = 0.0f;
-
-        this->tilePositionRow = tilePositionRow;
-        this->tilePositionCol = tilePositionCol;
 
         this->matrix_translaction = glm::mat4(1);
         this->matrix_rotation = glm::mat4(1);
@@ -48,12 +42,6 @@ public:
 	void transform() {
 		transformations = matrix_translaction * matrix_rotation * matrix_scala;
 	}
-
-	void getPositionTile(int &row, int &col){
-	    row = tilePositionRow;
-        col = tilePositionCol;
-	}
-
 
 	~Transformations() {};
 };

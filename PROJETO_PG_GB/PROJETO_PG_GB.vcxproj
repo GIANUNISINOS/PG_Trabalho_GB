@@ -35,6 +35,7 @@
     <ClInclude Include="header\SpriteSheet.h" />
     <ClInclude Include="header\stb_image.h" />
     <ClInclude Include="header\Texture.h" />
+    <ClInclude Include="header\TileClass.h" />
     <ClInclude Include="header\Tilemap.h" />
     <ClInclude Include="header\Tileset.h" />
     <ClInclude Include="header\Transformations.h" />

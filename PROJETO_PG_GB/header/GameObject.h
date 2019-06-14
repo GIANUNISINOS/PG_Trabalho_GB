@@ -19,6 +19,10 @@ public:
     float height;
     bool *gameIsRunning;
 
+	bool onCorrectTile;
+	int tileCol;
+	int tileRow;
+
 	GameObject(SpriteSheet* spritesParam,float width, float height, float initialPosX, float initialPosY, float speedParam, bool invertX, bool *gameIsRunning,int tilePositionRow, int tilePositionCol) {
 		sprites = spritesParam;
 		previousFrameTime = glfwGetTime();
@@ -33,8 +37,11 @@ public:
 
 		setupVertices(sprites->columns, sprites->rows);
 
+
+		this->tileCol = tilePositionCol;
+		this->tileRow = tilePositionRow;
 		//poe na pos inicial
-		transformations = new Transformations(initialPosX, initialPosY, tilePositionRow, tilePositionCol);
+		transformations = new Transformations(initialPosX, initialPosY);
 	}
 
 	/*
@@ -101,22 +108,141 @@ public:
 		}
 	}
 
-	void isOnCorrectPosition() {
-		int row = this->transformations->tilePositionRow;
-		int col = this->transformations->tilePositionCol;
+    bool testCollisionWithAnotherObject(GameObject *another){
+		
+		bool sameX = this->tileCol == another->tileCol;
+		bool sameY = this->tileRow == another->tileRow;
 
+		return sameX && sameY;
+    }
+
+	void movementIteration(Tilemap* tilemap, int keys[1024]) {
+		/*
+			Se o carro estiver fora da sua posição final apos a solicitação de movimento
+			move esse pouco a pouco
+		*/
+		//int correctRow, correctCol;
+		//this->transformations->getPositionTile(correctRow, correctCol);
+
+		float correctX, correctY;
+		tilemap->calculoDesenhoDiamond(correctX, correctY, tileRow, tileCol);
+
+		float actualX = this->transformations->xCenter - TILE_WIDTH / 2.0;
+		float actualY = this->transformations->yCenter - TILE_HEIGHT / 2.0;
+
+		float differenceX = correctX - actualX;
+		float differenceY = correctY - actualY;
+
+		onCorrectTile = (differenceX == 0 && differenceY == 0);
+
+		if (onCorrectTile) this->keyboardReaction(tilemap, keys);
+		else {
+			float x = 0.0f, y = 0.0f;
+			if (differenceX > 0) {
+				x = 2.0f;
+			}
+			else if (differenceX < 0) {
+				x = -2.0f;
+			}
+			if (differenceY > 0) {
+				y = 1.0f;
+			}
+			else if (differenceY < 0) {
+				y = -1.0f;
+			}
+			this->transformations->move(x, y);
+		}
 	}
 
-    bool testCollisionWithAnotherObject(GameObject *another){
-        float difInX = abs(this->transformations->xCenter - another->transformations->xCenter);
-        float difInY = abs(this->transformations->yCenter - another->transformations->yCenter);
+	void keyboardReaction(Tilemap* tilemap, int* keys) {
+		if (keys[GLFW_KEY_DOWN] == 1) {
+			this->moveToTile(DIRECTION_SE, tilemap);
+		}
+		else if (keys[GLFW_KEY_UP] == 1) {
+			this->moveToTile(DIRECTION_NO, tilemap);
+		}
+		else if (keys[GLFW_KEY_RIGHT] == 1) {
+			this->moveToTile(DIRECTION_NE, tilemap);
+		}
+		else if (keys[GLFW_KEY_LEFT] == 1) {
+			this->moveToTile(DIRECTION_SO, tilemap);
+		}
+	}
 
-        if(difInX<10.0f  &&  difInY<10.0f){
-            return true;
-        } else {
-            return false;
-        }
-    }
+	void clickReaction(int rowCliked, int colCliked, Tilemap* tilemap) {
+		
+		if (this->onCorrectTile == false) return;
+
+		int diffRows = rowCliked - this->tileRow;
+		int diffCols = colCliked - this->tileCol;
+
+		if (abs(diffRows) > 1 || abs(diffCols) > 1)
+			return;
+
+		if (diffRows == -1 && diffCols == 0) { //esquerda cima
+			this->moveToTile(DIRECTION_NO, tilemap);
+		}
+		else if (diffRows == 0 && diffCols == 1) { //direita cima
+			this->moveToTile(DIRECTION_NE, tilemap);
+		}
+		else if (diffRows == 0 && diffCols == -1) { //esq baixo
+			this->moveToTile(DIRECTION_SO, tilemap);
+		}
+		else if (diffRows == 1 && diffCols == 0) { //direita baixo
+			this->moveToTile(DIRECTION_SE, tilemap);
+		}
+	}
+
+
+	void moveToTile(int direction, Tilemap* tilemap) {
+
+		switch (direction) {
+		case DIRECTION_SE: // clicar para baixo
+			if (tileRow < (ROWS - 1) && tilemap->matrixTiles[tileRow + 1][tileCol]->isWalking) {
+				this->tileRow++;
+				this->sprites->setRow(1);
+				this->sprites->setColumn(1);
+
+				this->transformations->move(2.0f, 1.0f);
+
+			
+			}
+			break;
+		case DIRECTION_NO:// clicar para cima
+			if (tileRow > 0 && tilemap->matrixTiles[tileRow - 1][tileCol]->isWalking) {
+				this->tileRow--;
+				this->sprites->setRow(0);
+				this->sprites->setColumn(0);
+
+				this->transformations->move(-2.0f, -1.0f);
+
+		
+			}
+			break;
+		case DIRECTION_NE:// clicar para direita
+			if (tileCol < (COLS - 1) && tilemap->matrixTiles[tileRow][tileCol + 1]->isWalking) {
+				this->tileCol++;
+				this->sprites->setRow(0);
+				this->sprites->setColumn(1);
+
+				this->transformations->move(2.0f, -1.0f);
+
+		
+			}
+			break;
+		case DIRECTION_SO:// clicar para esquerda
+			if (tileCol > 0 && tilemap->matrixTiles[tileRow][tileCol - 1]->isWalking) {
+				this->tileCol--;
+				this->sprites->setRow(1);
+				this->sprites->setColumn(0);
+
+				this->transformations->move(-2.0f, 1.0f);
+
+			}
+			break;
+		}
+
+	}
 
 	virtual ~GameObject();
 };

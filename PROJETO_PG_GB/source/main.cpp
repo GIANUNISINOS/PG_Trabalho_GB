@@ -7,9 +7,11 @@
     #include "header/SpriteSheet.h";
     #include "header/VerticesObject.h";
 	#include "header/Transformations.h";
+	#include "header/TileClass.h";
+	#include "header/Tilemap.h";	
 	#include "header/GameObject.h";
-    #include "header/TileClass.h";
-    #include "header/Tilemap.h";
+   
+   
 #elif _WIN64
     #include "../header/Configurations.h";
 	#include "../header/Includes.h";
@@ -19,9 +21,11 @@
 	#include "../header/SpriteSheet.h";
 	#include "../header/VerticesObject.h";
 	#include "../header/Transformations.h";
-	#include "../header/GameObject.h";
 	#include "../header/TileClass.h";
 	#include "../header/Tilemap.h";
+	#include "../header/GameObject.h";
+	
+	
 #endif
 
 // definicao de alguns atributos globais
@@ -32,7 +36,6 @@ bool gameIsRunning = true;
 
 SpriteSheet* spritesCar;
 GameObject *car;
-bool carIsStop = true;
 
 SpriteSheet* spritesFuel;
 GameObject *fuel;
@@ -66,141 +69,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if(action == GLFW_RELEASE) keys[key] = 0;
 }
 
-void printValues(int rowCar, int colCar) {
-	float tileX, tileY;
-	tilemap->calculoDesenhoDiamond(tileX, tileY, rowCar, colCar);
-	printf("\n------------------------------------------------------------------------------------\n");
-	printf("tileX: %5.5f, tileY: %5.5f, rowcar: %d, colCar: %d\n", tileX, tileY, rowCar, colCar);
-	printf("carX: %5.5f, carY: %5.5f\n", car->transformations->xCenter - TILE_WIDTH/2.0, car->transformations->yCenter - TILE_HEIGHT/2.0);
-	printf("------------------------------------------------------------------------------------\n");
-}
 
-void startCarMove(int a) {
-    int rowCar, colCar;
-    car->transformations->getPositionTile(rowCar, colCar);
-
-    switch (a) {
-        case DIRECTION_SE: // clicar para baixo
-            if (rowCar < (ROWS - 1) && tilemap->matrixTiles[rowCar+1][colCar]->isWalking ) {
-                car->transformations->tilePositionRow++;
-                car->sprites->setRow(1);
-                car->sprites->setColumn(1);
-
-				car->transformations->move(2.0f, 1.0f);
-
-				if(DEBUG) printValues(rowCar + 1, colCar);
-			}
-            break;
-        case DIRECTION_NO:// clicar para cima
-            if (rowCar > 0 && tilemap->matrixTiles[rowCar-1][colCar]->isWalking ) {
-                car->transformations->tilePositionRow--;
-                car->sprites->setRow(0);
-                car->sprites->setColumn(0);
-                
-				car->transformations->move(-2.0f, -1.0f);
-
-				if (DEBUG) printValues(rowCar - 1, colCar);
-            }
-            break;
-        case DIRECTION_NE:// clicar para direita
-            if (colCar < (COLS - 1) &&  tilemap->matrixTiles[rowCar][colCar+1]->isWalking ) {
-                car->transformations->tilePositionCol++;
-                car->sprites->setRow(0);
-                car->sprites->setColumn(1);
-                
-				car->transformations->move(2.0f, -1.0f);
-
-				if (DEBUG) printValues(rowCar, colCar + 1);
-            }
-            break;
-        case DIRECTION_SO:// clicar para esquerda
-            if (colCar > 0 &&  tilemap->matrixTiles[rowCar][colCar-1]->isWalking ) {
-                car->transformations->tilePositionCol--;
-                car->sprites->setRow(1);
-                car->sprites->setColumn(0);
-                
-				car->transformations->move(-2.0f, 1.0f);
-				
-				if (DEBUG) printValues(rowCar, colCar - 1);
-			}
-            break;
-    }
-
-}
-
-void keboardReaction() {
-    if (keys[GLFW_KEY_DOWN] == 1) {
-        startCarMove(DIRECTION_SE);
-    }
-    else if (keys[GLFW_KEY_UP] == 1) {
-        startCarMove(DIRECTION_NO);
-    }
-    else if (keys[GLFW_KEY_RIGHT] == 1) {
-        startCarMove(DIRECTION_NE);
-    }
-    else if (keys[GLFW_KEY_LEFT] == 1) {
-        startCarMove(DIRECTION_SO);
-    }
-}
-
-void carReaction() {
-	/*
-		Se o carro estiver fora da sua posição final apos a solicitação de movimento
-	    move esse pouco a pouco
-	*/
-    int rowCar, colCar;
-    car->transformations->getPositionTile(rowCar, colCar);
-
-	float correctX, correctY;
-	tilemap->calculoDesenhoDiamond(correctX, correctY, rowCar, colCar);
-	
-	float actualX = car->transformations->xCenter - TILE_WIDTH / 2.0;
-	float actualY = car->transformations->yCenter - TILE_HEIGHT / 2.0;
-
-	float differenceX = correctX - actualX;
-	float differenceY = correctY - actualY;
-
-	carIsStop=(differenceX == 0 && differenceY == 0);
-
-	if (carIsStop)
-        keboardReaction();
-	else {
-		float x = 0.0f, y = 0.0f;
-		if (differenceX > 0) {
-			x = 2.0f;
-		}
-		else if (differenceX < 0) {
-			x = -2.0f;
-		}
-		if (differenceY > 0) {
-			y = 1.0f;
-		} else if (differenceY < 0) {
-			y = -1.0f;
-		}
-		car->transformations->move(x, y);
-	}
-}
-
-void clickReaction(int rowCliked, int colCliked){
-    int colCar = car->transformations->tilePositionCol;
-    int rowCar = car->transformations->tilePositionRow;
-
-    int diffRows = rowCliked - rowCar;
-    int diffCols = colCliked - colCar;
-
-    if (abs(diffRows) > 1 || abs(diffCols) > 1)
-        return;
-
-    if(diffRows == -1 && diffCols == 0){ //esquerda cima
-        startCarMove(DIRECTION_NO);
-    } else if(diffRows == 0 && diffCols == 1) { //direita cima
-        startCarMove(DIRECTION_NE);
-    } else if(diffRows == 0 && diffCols == -1) { //esq baixo
-        startCarMove(DIRECTION_SO);
-    } else if(diffRows == 1 && diffCols == 0) { //direita baixo
-        startCarMove(DIRECTION_SE);
-    }
-}
 
 /*
 Define acoes do mouse
@@ -219,8 +88,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
         tilemap->mouseMap(isClickValid, rowClick, columnClick, xPos, yPos);
 
-        if(isClickValid && carIsStop)
-            clickReaction(rowClick, columnClick);
+        if(isClickValid)
+            car->clickReaction(rowClick, columnClick, tilemap);
     }
 }
 
@@ -406,13 +275,16 @@ int main() {
         //testa colisao do carro com Objetos
         testCarColisionWithObjects();
 
+		//testa colisao com o mapa
+
+
 		double currentSeconds = glfwGetTime();
 		float speed = 0.05f;
 		if (keys[GLFW_KEY_SPACE] == 1) speed = 0.01f;
 
 		double elapsedSeconds = currentSeconds - previousFrameTime;
 		if (elapsedSeconds > speed) {
-            carReaction();
+			car->movementIteration(tilemap, keys);
 			previousFrameTime = currentSeconds;
 		}
         
