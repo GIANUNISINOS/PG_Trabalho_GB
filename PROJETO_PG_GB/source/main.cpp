@@ -20,7 +20,7 @@
 	#include "../header/VerticesObject.h";
 	#include "../header/Transformations.h";
 	#include "../header/GameObject.h";
-	#include "../header/Tile.h";
+	#include "../header/TileClass.h";
 	#include "../header/Tilemap.h";
 #endif
 
