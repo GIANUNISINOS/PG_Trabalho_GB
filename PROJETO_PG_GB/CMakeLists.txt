@@ -18,7 +18,7 @@ add_executable(PROJETO_PG_GB
         header/GameObject.h
         header/Tile.h
         header/Tilemap.h
-        )
+        header/Configurations.h)
 
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)

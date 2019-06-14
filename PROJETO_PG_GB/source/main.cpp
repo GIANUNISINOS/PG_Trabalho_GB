@@ -1,29 +1,5 @@
-#define DEBUG  true
-
-// tamanho do mapa
-#define ROWS 14
-#define COLS 14
-
-//tamanho dos tiles
-#define TILE_WIDTH  80
-#define TILE_HEIGHT 40
-
-//define direcoes
-#define DIRECTION_NO 1
-#define DIRECTION_O 2
-#define DIRECTION_SO 3
-#define DIRECTION_N 4
-#define DIRECTION_S 5
-#define DIRECTION_NE 6
-#define DIRECTION_E 7
-#define DIRECTION_SE 8
-
-#define Z_TILEMAP 0.53
-#define Z_FUEL 0.54
-#define Z_FLAG 0.55
-#define Z_CAR 0.56
-
 #ifdef __APPLE__
+    #include "header/Configurations.h";
     #include "header/Includes.h";
     #include "header/Shader.h";
     #include "header/Texture.h";
@@ -35,6 +11,7 @@
     #include "header/Tile.h";
     #include "header/Tilemap.h";
 #elif _WIN64
+    #include "../header/Configurations.h";
 	#include "../header/Includes.h";
 	#include "../header/Shader.h";
 	#include "../header/Texture.h";
