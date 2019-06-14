@@ -43,6 +43,9 @@
     <ClInclude Include="header\TileClass.h">
       <Filter>headers</Filter>
     </ClInclude>
+    <ClInclude Include="header\Car.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resource\textura1.jpg">

@@ -27,6 +27,7 @@
     <Image Include="resource\textura2.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\Car.h" />
     <ClInclude Include="header\GameObject.h" />
     <ClInclude Include="header\Includes.h" />
     <ClInclude Include="header\Position.h" />

@@ -24,7 +24,7 @@
 	#include "../header/TileClass.h";
 	#include "../header/Tilemap.h";
 	#include "../header/GameObject.h";
-	
+	#include "../header/Car.h";
 	
 #endif
 
@@ -35,7 +35,7 @@ Tilemap *tilemap;
 bool gameIsRunning = true;
 
 SpriteSheet* spritesCar;
-GameObject *car;
+Car *car;
 
 SpriteSheet* spritesFuel;
 GameObject *fuel;
@@ -89,7 +89,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         tilemap->mouseMap(isClickValid, rowClick, columnClick, xPos, yPos);
 
         if(isClickValid)
-            car->clickReaction(rowClick, columnClick, tilemap);
+            car->clickReaction(rowClick, columnClick);
     }
 }
 
@@ -117,7 +117,8 @@ void createCarObject(){
     int tilePositionCarCol = 0;
     tilemap->calculoDesenhoDiamond(xCarInitial,yCarInitial,tilePositionCarRow,tilePositionCarCol);
 
-    car = new GameObject(
+	car = new Car(
+			tilemap, keys,
             spritesCar,
             (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
             xCarInitial+(TILE_WIDTH/2),yCarInitial+(TILE_HEIGHT/2),
@@ -284,7 +285,7 @@ int main() {
 
 		double elapsedSeconds = currentSeconds - previousFrameTime;
 		if (elapsedSeconds > speed) {
-			car->movementIteration(tilemap, keys);
+			car->movementIteration();
 			previousFrameTime = currentSeconds;
 		}
         
