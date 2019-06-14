@@ -12,7 +12,7 @@ public:
     Tile *matrixTiles[ROWS][COLS] = {};
 
     Tilemap(float tileWidth, float tileHeight, int numRows, int numCols ){
-        this->tileset = new SpriteSheet("resource/mapa/seasons_tiles - resize.png",true, 8, 12, -0.10f);
+        this->tileset = new SpriteSheet("resource/mapa/seasons_tiles - resize.png",true, 8, 12, (float) Z_TILEMAP);
 
         this->numRows = numRows;
         this->numCols = numCols;
@@ -164,6 +164,76 @@ public:
             }
         }
     }
+
+
+
+    bool testPointCollision(float RefenceX,float RefenceY, float Bx,float By, float Cx,float Cy, float Px, float Py){
+        float ABx = Bx-RefenceX;
+        float ABy = By-RefenceY;
+        float ABmodule = sqrt(pow(ABx,2)+pow(ABy,2));
+
+        float normalABx = ABx / ABmodule;
+        float normalABy = ABy / ABmodule;
+
+        float ACx = Cx-RefenceX;
+        float ACy = Cy-RefenceY;
+        float ACmodule = sqrt(pow(ACx,2)+pow(ACy,2));
+
+        float normalACx = ACx / ACmodule;
+        float normalACy = ACy / ACmodule;
+
+        float APx = Px-RefenceX;
+        float APy = Py-RefenceY;
+        float APmodule = sqrt(pow(APx,2)+pow(APy,2));
+
+        float normalAPx = APx / APmodule;
+        float normalAPy = APy / APmodule;
+
+        float theta = acos(normalABx * normalAPx + normalABy * normalAPy);
+        float alpha = acos(normalABx * normalACx + normalABy * normalACy);
+        float betha = acos(normalACx * normalAPx + normalACy * normalAPy);
+
+        // bool collide = alpha == (theta + betha);
+        bool collide = 0.001>abs(alpha - (theta + betha));
+        return collide;
+    }
+
+    void mouseMap(bool &isClickValid,int &rowClick, int &columnClick, double xPos,double yPos) {
+        isClickValid = false;
+
+        //projecao do click
+        this->calculoCliqueDiamond(xPos, yPos, rowClick, columnClick);
+
+        if (rowClick < 0 || columnClick < 0 || columnClick >= COLS || rowClick >= ROWS)
+            return;
+
+        Tile *tile = matrixTiles[rowClick][columnClick];
+
+        if (testPointCollision(tile->Ax, tile->Ay, tile->Bx, tile->By, tile->Cx, tile->Cy, xPos, yPos))
+            isClickValid = true;
+
+        if(isClickValid==true){
+            // caso debug ativo printa linha e coluna clicada
+            if (DEBUG) {
+                printf("\nxPos: %f", xPos);
+                printf("\nyPos: %f", yPos);
+                printf("\nRow: %d", rowClick);
+                printf("\nColumn: %d\n", columnClick);
+                printf("\nleftPoint x %f", tile->Ax);
+                printf("\nleftPoint y %f\n", tile->Ay);
+                printf("\ntopPointX x %f", tile->Bx);
+                printf("\ntopPointY y %f\n", tile->By);
+                printf("\nbottomPointX x %f", tile->Cx);
+                printf("\nbottomPointY y %f\n", tile->Cy);
+                printf("\nrightPointX x %f", tile->Dx);
+                printf("\nrightPointY y %f\n", tile->Dy);
+            }
+            if(DEBUG) printf("\nValid Clicked Row: %d", rowClick);
+            if(DEBUG) printf("\nValid Clicked Column: %d\n", columnClick);
+        }
+    }
+
+
 
     ~Tilemap()
     {

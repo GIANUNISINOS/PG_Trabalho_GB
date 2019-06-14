@@ -18,6 +18,10 @@
 #define DIRECTION_E 7
 #define DIRECTION_SE 8
 
+#define Z_TILEMAP 0.53
+#define Z_FUEL 0.54
+#define Z_CAR 0.55
+
 #ifdef __APPLE__
     #include "header/Includes.h";
     #include "header/Shader.h";
@@ -42,14 +46,19 @@
 	#include "../header/Tilemap.h";
 #endif
 
+// definicao de alguns atributos globais
 Shader *shaderProgram;
 GLFWwindow *window;
 Tilemap *tilemap;
+bool gameIsRunning = true;
+
+SpriteSheet* spritesCar;
 GameObject *car;
 bool carIsStop = true;
+
+SpriteSheet* spritesFuel;
 GameObject *fuel;
 
-bool gameIsRunning = true;
 
 //Atributos janela
 const int WIDTH = ROWS*TILE_WIDTH;
@@ -156,7 +165,8 @@ void keboardReaction() {
 
 void carReaction() {
 	/*
-		Se o carro estiver fora da sua posição
+		Se o carro estiver fora da sua posição final apos a solicitação de movimento
+	    move esse pouco a pouco
 	*/
     int rowCar, colCar;
     car->transformations->getPositionTile(rowCar, colCar);
@@ -212,89 +222,25 @@ void clickReaction(int rowCliked, int colCliked){
     }
 }
 
-bool testPointCollision(float RefenceX,float RefenceY, float Bx,float By, float Cx,float Cy, float Px, float Py){
-    float ABx = Bx-RefenceX;
-    float ABy = By-RefenceY;
-    float ABmodule = sqrt(pow(ABx,2)+pow(ABy,2));
-
-    float normalABx = ABx / ABmodule;
-    float normalABy = ABy / ABmodule;
-
-    float ACx = Cx-RefenceX;
-    float ACy = Cy-RefenceY;
-    float ACmodule = sqrt(pow(ACx,2)+pow(ACy,2));
-
-    float normalACx = ACx / ACmodule;
-    float normalACy = ACy / ACmodule;
-
-    float APx = Px-RefenceX;
-    float APy = Py-RefenceY;
-    float APmodule = sqrt(pow(APx,2)+pow(APy,2));
-
-    float normalAPx = APx / APmodule;
-    float normalAPy = APy / APmodule;
-
-    float theta = acos(normalABx * normalAPx + normalABy * normalAPy);
-    float alpha = acos(normalABx * normalACx + normalABy * normalACy);
-    float betha = acos(normalACx * normalAPx + normalACy * normalAPy);
-
-    // bool collide = alpha == (theta + betha);
-    bool collide = 0.001>abs(alpha - (theta + betha));
-    return collide;
-}
-
-void mouseMap(double xPos,double yPos) {
-    bool isClickValid = false;
-    int rowClick, columnClick;
-    tilemap->calculoCliqueDiamond(xPos, yPos, rowClick, columnClick);
-
-    if (rowClick < 0 || columnClick < 0 || columnClick >= COLS || rowClick >= ROWS)
-        return;
-
-    Tile *tile = tilemap->matrixTiles[rowClick][columnClick];
-
-
-
-
-    if (testPointCollision(tile->Ax, tile->Ay, tile->Bx, tile->By, tile->Cx, tile->Cy, xPos, yPos))
-        isClickValid = true;
-
-    if(isClickValid==true){
-        // caso debug ativo printa linha e coluna clicada
-        if (DEBUG) {
-            printf("\nxPos: %f", xPos);
-            printf("\nyPos: %f", yPos);
-            printf("\nRow: %d", rowClick);
-            printf("\nColumn: %d\n", columnClick);
-            printf("\nleftPoint x %f", tile->Ax);
-            printf("\nleftPoint y %f\n", tile->Ay);
-            printf("\ntopPointX x %f", tile->Bx);
-            printf("\ntopPointY y %f\n", tile->By);
-            printf("\nbottomPointX x %f", tile->Cx);
-            printf("\nbottomPointY y %f\n", tile->Cy);
-            printf("\nrightPointX x %f", tile->Dx);
-            printf("\nrightPointY y %f\n", tile->Dy);
-        }
-        if(DEBUG) printf("\nValid Clicked Row: %d", rowClick);
-        if(DEBUG) printf("\nValid Clicked Column: %d\n", columnClick);
-        if(carIsStop)
-            clickReaction(rowClick, columnClick);
-    }
-}
-
 /*
 Define acoes do mouse
 */
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
         double xPos, yPos;
+        bool isClickValid;
+        int rowClick,columnClick;
+
         glfwGetCursorPos(window, &xPos, &yPos);
 
         //Realiza a proporcao do clique para projecao original
         xPos = WIDTH * xPos / RESIZED_WIDTH;
         yPos = HEIGHT * yPos / RESIZED_HEIGHT;
 
-        mouseMap(xPos, yPos);
+        tilemap->mouseMap(isClickValid, rowClick, columnClick, xPos, yPos);
+
+        if(isClickValid && carIsStop)
+            clickReaction(rowClick, columnClick);
     }
 }
 
@@ -308,6 +254,51 @@ GLFWwindow* createWindow() {
     glfwMakeContextCurrent(window);
     return window;
 }
+
+void createCarObject(){
+    //cria objeto sprites de carros
+    spritesCar = new SpriteSheet("resource/cars/4cars.png",true, 2, 2, (float) Z_CAR);
+    spritesCar->setColumn(1);
+    spritesCar->setRow(0);
+
+    //cria objeto carro
+    float xCarInitial;
+    float yCarInitial;
+    int tilePositionCarRow = 13;
+    int tilePositionCarCol = 0;
+    tilemap->calculoDesenhoDiamond(xCarInitial,yCarInitial,tilePositionCarRow,tilePositionCarCol);
+
+    car = new GameObject(
+            spritesCar,
+            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
+            xCarInitial+(TILE_WIDTH/2),yCarInitial+(TILE_HEIGHT/2),
+            0.5f, false,&gameIsRunning,
+            tilePositionCarRow, tilePositionCarCol
+    );
+}
+
+void createFuelObject(){
+    //cria objeto sprites de fuel
+    spritesFuel =new SpriteSheet("resource/objects/fuel.png",true, 1, 1, (float) Z_FUEL);
+    spritesFuel->setColumn(0);
+    spritesFuel->setRow(0);
+
+    //cria objeto combustivel
+    float xFuelInitial;
+    float yFuelInitial;
+    int tilePositionFuelRow = 2;
+    int tilePositionFuelCol = 2;
+    tilemap->calculoDesenhoDiamond(xFuelInitial,yFuelInitial,tilePositionFuelRow,tilePositionFuelCol);
+
+    fuel = new GameObject(
+            spritesFuel,
+            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
+            xFuelInitial+(TILE_WIDTH/2),yFuelInitial+(TILE_HEIGHT/2),
+            0.5f, false,&gameIsRunning,
+            tilePositionFuelRow, tilePositionFuelCol
+    );
+}
+
 
 int main() {
 	if (!glfwInit()) {
@@ -351,46 +342,11 @@ int main() {
     //instancia do tilemap
     tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
 
-    //cria objeto sprites de carros
-    SpriteSheet* spritesCar =new SpriteSheet("resource/cars/4cars.png",true, 2, 2, 0.94f);
-    spritesCar->setColumn(1);
-    spritesCar->setRow(0);
-
-    //cria objeto carro
-    float xCarInitial;
-    float yCarInitial;
-    int tilePositionCarRow = 13;
-    int tilePositionCarCol = 0;
-    tilemap->calculoDesenhoDiamond(xCarInitial,yCarInitial,tilePositionCarRow,tilePositionCarCol);
-
-    car = new GameObject(
-            spritesCar,
-            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
-            xCarInitial+(TILE_WIDTH/2),yCarInitial+(TILE_HEIGHT/2),
-            0.5f, false,&gameIsRunning,
-            tilePositionCarRow, tilePositionCarCol
-            );
-
-
-    //cria objeto sprites de fuel
-    SpriteSheet* spritesFuel =new SpriteSheet("resource/objects/fuel.png",true, 1, 1, 0.93f);
-    spritesFuel->setColumn(0);
-    spritesFuel->setRow(0);
+    //cria o objeto carro
+    createCarObject();
 
     //cria objeto combustivel
-    float xFuelInitial;
-    float yFuelInitial;
-    int tilePositionFuelRow = 2;
-    int tilePositionFuelCol = 2;
-    tilemap->calculoDesenhoDiamond(xFuelInitial,yFuelInitial,tilePositionFuelRow,tilePositionFuelCol);
-
-    fuel = new GameObject(
-            spritesFuel,
-            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
-            xFuelInitial+(TILE_WIDTH/2),yFuelInitial+(TILE_HEIGHT/2),
-            0.5f, false,&gameIsRunning,
-            tilePositionFuelRow, tilePositionFuelCol
-    );
+    createFuelObject();
 
     // looping do main
 	double previousFrameTime = glfwGetTime();
