@@ -119,7 +119,7 @@ void createCarObject(){
             spritesCar,
             (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
             xCarInitial+(TILE_WIDTH/2),yCarInitial+(TILE_HEIGHT/2),
-            0.5f, false,&gameIsRunning,
+            1.0f, false,&gameIsRunning,
             tilePositionCarRow, tilePositionCarCol
     );
 }
@@ -171,7 +171,7 @@ void drawAllFlags(){
 void testCarColisionWithObjects(){
     if(car->testCollisionWithAnotherObject(flags[actualVisibleFlag])) {
                 catchedFlags++;
-                printf("Voce pegou %d bandeiras!\n",catchedFlags);
+                printf("\nVoce pegou %d bandeiras!\n",catchedFlags);
                 flags[actualVisibleFlag]->sprites->z = Z_OUT_OF_SCREEN;
                 //testa se ganhou o jogo
 
@@ -179,6 +179,7 @@ void testCarColisionWithObjects(){
                     printf("\nYou Win!\n");
                     gameIsRunning = false;
                 } else{
+                    car->speed = car->speed + 1.0f;
                     changeVisibleFlag();
                 }
     }
@@ -306,8 +307,7 @@ int main() {
 
         }
 
-        float speed = 0.05f;
-        if (keys[GLFW_KEY_SPACE] == 1) speed = 0.01f;
+        float speed = 0.01f / car->speed;
 
         double elapsedSecondsMove = currentSeconds - startMoveTime;
         if (elapsedSecondsMove > speed) {
