@@ -32,8 +32,8 @@
 // definicao de alguns atributos globais
 Shader *shaderProgram;
 GLFWwindow *window;
+
 Tilemap *tilemap;
-bool gameIsRunning = true;
 
 SpriteSheet* spritesCar;
 Car *car;
@@ -43,7 +43,11 @@ GameObject *fuel;
 
 vector<SpriteSheet*> spritesFlags;
 vector<GameObject *> flags;
+
 int remainingFlags;
+bool gameIsRunning = true;
+double startGameTime;
+
 
 //Atributos janela
 const int WIDTH = ROWS*TILE_WIDTH;
@@ -196,6 +200,7 @@ void testCarColisionWithObjects(){
 }
 
 void rebootGame(){
+    startGameTime = glfwGetTime();
     gameIsRunning = true;
 
     //cria o objeto carro
@@ -270,7 +275,7 @@ int main() {
     startGame();
 
     // looping do main
-	double previousFrameTime = glfwGetTime();
+	double startMoveTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
 
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -308,12 +313,18 @@ int main() {
 		float speed = 0.05f;
 		if (keys[GLFW_KEY_SPACE] == 1) speed = 0.01f;
 
-		double elapsedSeconds = currentSeconds - previousFrameTime;
-		if (elapsedSeconds > speed) {
+		double elapsedSecondsMove = currentSeconds - startMoveTime;
+		if (elapsedSecondsMove > speed) {
 			car->movementIteration();
-			previousFrameTime = currentSeconds;
+            startMoveTime = currentSeconds;
 		}
-        
+
+		// testa se o tempo para ganhar o jogo foi esgotado
+//        double elapsedSecondsGame = currentSeconds - startGameTime;
+//        if (elapsedSecondsGame > 15) {
+//            car->isDead = true;
+//        }
+
         //fila eventos 
 		glfwPollEvents();
 		glfwSwapBuffers(window);

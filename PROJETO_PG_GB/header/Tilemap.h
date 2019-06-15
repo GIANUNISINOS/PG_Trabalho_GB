@@ -90,7 +90,7 @@ public:
         //matrix do mapa
         int mapa[ROWS][COLS] = {
                 {36, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 39},
-                {35, 20, 24, 20, 24, 24, 44, 24, 24, 45, 24, 24, 20, 9},
+                {35, 20, 24, 20, 24, 24, 20, 20, 24, 45, 24, 24, 20, 9},
                 {35, 68, 48, 48, 48, 23, 24, 48, 68, 48, 69, 68, 24, 9},
                 {35, 24, 24, 24, 48, 48, 48, 48, 48, 48, 48, 68, 24, 37},
                 {35, 20, 20, 24, 48, 27, 48, 68, 48, 23, 44, 48, 24, 69},
@@ -116,7 +116,7 @@ public:
 
                 //define tile caminhavel
                 bool isWalking = (idTex==48);
-				bool isMortal = (idTex==68);
+                bool isMortal = (idTex==68) || (idTex==20);
                 //cria o tile
                 Tile *t = new Tile(x0,y0,idTex,isWalking,isMortal);
                 matrixTiles[row][col] = t;
