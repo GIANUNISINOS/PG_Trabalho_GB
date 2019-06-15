@@ -116,7 +116,7 @@ void createExplosionObject(){
             spritesExplosion,
             (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
             0.0f,0.0f,
-            0.0f, false, &gameIsRunning,
+            0.0f, &gameIsRunning,
             0, 0
     );
 }
@@ -130,7 +130,7 @@ void createGameOverObject() {
 		spritesGameOver,
 		WIDTH, HEIGHT,
 		WIDTH/2.0F, HEIGHT/2.0f,
-		0.0f, false, &gameIsRunning,
+		0.0f, &gameIsRunning,
 		0, 0
 	);
 }
@@ -143,7 +143,7 @@ void createGameWinObject() {
 		spritesGameWin,
 		WIDTH, HEIGHT,
 		WIDTH / 2.0F, HEIGHT / 2.0f,
-		0.0f, false, &gameIsRunning,
+		0.0f, &gameIsRunning,
 		0, 0
 	);
 }
@@ -167,7 +167,7 @@ void createCarObject(){
             spritesCar,
             (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
             xCarInitial+(TILE_WIDTH/2),yCarInitial+(TILE_HEIGHT/2),
-            1.0f, false,&gameIsRunning,
+            1.0f, &gameIsRunning,
             tilePositionCarRow, tilePositionCarCol
     );
 }
@@ -194,7 +194,7 @@ void createFlagsObjects(){
                     spritesFlags[i],
                     (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
                     xFlagInitial+(TILE_WIDTH/2),yFlagInitial+(TILE_HEIGHT/2),
-                    0.5f, false, &gameIsRunning,
+                    0.5f, &gameIsRunning,
                     tilePositionFlagRow[i], tilePositionFlagCol[i]
             )
         );
@@ -268,6 +268,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if(action == GLFW_PRESS) keys[key] = 1;
     if(action == GLFW_RELEASE) keys[key] = 0;
     if(action == GLFW_PRESS && key == GLFW_KEY_ENTER) rebootGame();
+    if(action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) glfwSetWindowShouldClose(window, true);
 }
 
 

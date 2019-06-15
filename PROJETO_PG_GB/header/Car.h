@@ -8,8 +8,8 @@ public:
 	int* keys;
 	bool isDead = false;
 
-	Car(Tilemap* tilemap, int* keys, SpriteSheet* spritesParam, float width, float height, float initialPosX, float initialPosY, float speedParam, bool invertX, bool *gameIsRunning, int tilePositionRow, int tilePositionCol)
-		: GameObject(spritesParam, width, height, initialPosX, initialPosY, speedParam, invertX, gameIsRunning, tilePositionRow, tilePositionCol) {
+	Car(Tilemap* tilemap, int* keys, SpriteSheet* spritesParam, float width, float height, float initialPosX, float initialPosY, float speedParam, bool *gameIsRunning, int tilePositionRow, int tilePositionCol)
+		: GameObject(spritesParam, width, height, initialPosX, initialPosY, speedParam, gameIsRunning, tilePositionRow, tilePositionCol) {
 	
 		this->tilemap = tilemap;
 		this->keys = keys;
