@@ -255,7 +255,7 @@ void rebootGame(){
 
 void startGame(){
     //instancia do tilemap
-    tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
+    tilemap = new Tilemap();
 
     //cria objetos em suas posições iniciais
     rebootGame();

@@ -1,9 +1,7 @@
 class Tilemap
 {
 public:
-	int numRows, numCols;
-    float tileWidth, tileHeight;
-    float sum_tiles_heigth;
+	float sum_tiles_heigth;
     glm::mat4 modelMatrix;
 
 	SpriteSheet* tileset;
@@ -11,19 +9,13 @@ public:
 
     Tile *matrixTiles[ROWS][COLS] = {};
 
-    Tilemap(float tileWidth, float tileHeight, int numRows, int numCols ){
+    Tilemap(){
         this->tileset = new SpriteSheet("resource/mapa/seasons_tiles - resize.png",true, 8, 12, (float) Z_TILEMAP);
 
-        this->numRows = numRows;
-        this->numCols = numCols;
-
-        this->tileWidth = tileWidth;
-        this->tileHeight = tileHeight;
-
-        this->sum_tiles_heigth = tileHeight*numCols;
+        this->sum_tiles_heigth = TILE_HEIGHT*COLS;
         this->modelMatrix = glm::mat4(1);
 
-        this->setupVertices(tileWidth, tileHeight);
+        this->setupVertices(TILE_WIDTH, TILE_HEIGHT);
 
         this->createMatrixTiles();
     }
@@ -49,26 +41,26 @@ public:
     }
 
     void calculoDesenhoDiamond(float &x, float &y, int row, int col) {
-        x = row * (this->tileWidth / 2.0f) + col * (this->tileWidth / 2.0f);
-        y = row * (this->tileHeight / 2.0f) - col * (this->tileHeight / 2.0f) + this->sum_tiles_heigth / 2.0f -
-            (this->tileHeight / 2.0f);
+        x = row * (TILE_WIDTH / 2.0f) + col * (TILE_WIDTH / 2.0f);
+        y = row * (TILE_HEIGHT / 2.0f) - col * (TILE_HEIGHT / 2.0f) + this->sum_tiles_heigth / 2.0f -
+            (TILE_HEIGHT / 2.0f);
     }
 
     void calculoDesenhoSlideMap(float &x, float &y, int row, int col) {
-        x = ((float) col) * tileWidth + ((float) row) * (tileWidth / 2.0f);
-        y = ((float) row) * tileHeight / 2.0f;
+        x = ((float) col) * TILE_WIDTH + ((float) row) * (TILE_WIDTH / 2.0f);
+        y = ((float) row) * TILE_HEIGHT / 2.0f;
     }
 
     void calculoDesenhoLinear(float &x, float &y, int row, int col) {
-        x = col*tileWidth;
-        y = row*tileHeight;
+        x = col*TILE_WIDTH;
+        y = row*TILE_HEIGHT;
     }
 
     void calculoCliqueDiamond(float xPos, float yPos, int &row, int &col) {
         double x = (double) xPos;
         double y = ((double) yPos) - (((double) sum_tiles_heigth) / 2.0);
-        double tw = (double) tileWidth;
-        double th = (double) tileHeight;
+        double tw = (double) TILE_WIDTH;
+        double th = (double) TILE_HEIGHT;
         double rowClick = (((2.0 * y / th) + (2.0 * x / tw))) / 2.0;
         double columnClick = (2.0 * x / tw) - rowClick;
 
@@ -77,13 +69,13 @@ public:
     }
 
     void calculoCliqueSlideMap(float xPos, float yPos, int &row, int &col) {
-        row = (int) (yPos / (tileHeight/2.0));
-        col = (int) ((xPos - (row * (tileWidth/2.0)))/tileWidth);
+        row = (int) (yPos / (TILE_HEIGHT/2.0));
+        col = (int) ((xPos - (row * (TILE_WIDTH/2.0)))/TILE_WIDTH);
     }
 
     void calculoCliqueLinear(float xPos, float yPos, int &row, int &col) {
-        row = yPos/tileHeight;
-        col = xPos/tileWidth;
+        row = yPos/TILE_HEIGHT;
+        col = xPos/TILE_WIDTH;
     }
 
     void createMatrixTiles() {
@@ -105,8 +97,8 @@ public:
                 {48, 48, 68, 24, 24, 24, 42, 32, 32, 32, 32, 32, 32, 12}
         };
 
-        for (int row = 0; row < numRows; row++) {
-            for (int col = 0; col < numCols; col++) {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
                 //define onde o tile é desenhado
                 float x0,y0;
                 this->calculoDesenhoDiamond(x0,y0,row,col);
@@ -135,8 +127,8 @@ public:
         // Define em quais vertices sera desenhado pelo shader
         vertices->bind(shaderProgram);
 
-        for (int row = 0; row < numRows; row++) {
-            for (int col = 0; col < numCols; col++) {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
                 Tile *t = matrixTiles[row][col];
 
                 float xi;
