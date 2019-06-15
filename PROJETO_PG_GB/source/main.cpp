@@ -179,7 +179,7 @@ void testCarColisionWithObjects(){
                     printf("\nYou Win!\n");
                     gameIsRunning = false;
                 } else{
-                    car->speed = car->speed + 1.0f;
+                    if(catchedFlags%4 == 0) car->speed = car->speed + 0.5f;
                     changeVisibleFlag();
                 }
     }
