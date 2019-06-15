@@ -38,8 +38,8 @@ Tilemap *tilemap;
 SpriteSheet* spritesCar;
 Car *car;
 
-SpriteSheet* spritesFuel;
-GameObject *fuel;
+SpriteSheet* spritesExplosion;
+GameObject *explosion;
 
 vector<SpriteSheet*> spritesFlags;
 vector<GameObject *> flags;
@@ -100,6 +100,21 @@ GLFWwindow* createWindow() {
     glfwMakeContextCurrent(window);
     return window;
 }
+
+void createExplosionObject(){
+    //cria objeto sprites de explosao
+    spritesExplosion = new SpriteSheet("resource/objects/fire.png",true, 1, 1, (float) Z_OUT_OF_SCREEN);
+
+    //cria objeto esplosao
+    explosion = new GameObject(
+            spritesExplosion,
+            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
+            0.0f,0.0f,
+            0.0f, false, &gameIsRunning,
+            0, 0
+    );
+}
+
 
 void createCarObject(){
     //cria objeto sprites de carros
@@ -179,7 +194,7 @@ void testCarColisionWithObjects(){
                     printf("\nYou Win!\n");
                     gameIsRunning = false;
                 } else{
-                    if(catchedFlags%4 == 0) car->speed = car->speed + 0.5f;
+                    if(catchedFlags%2 == 0) car->speed = car->speed + 1.0f;
                     changeVisibleFlag();
                 }
     }
@@ -196,6 +211,9 @@ void rebootGame(){
     //cria todas bandeiras
     createFlagsObjects();
     changeVisibleFlag();
+
+    //cria explosao
+    createExplosionObject();
 }
 
 void startGame(){
@@ -275,8 +293,11 @@ int main() {
 		//desenha tilemap
         tilemap->draw(shaderProgram);
 
-        //desenha
+        //desenha carro
         car->draw(shaderProgram);
+
+        //desenha explosao
+        explosion->draw(shaderProgram);
 
         //desenha all flags
         drawAllFlags();
@@ -290,6 +311,8 @@ int main() {
             //testa colisao com o mapa
             if (car->isDead) {
                 printf("\nYou Died!\n");
+                explosion->transformations->move(car->transformations->xCenter, car->transformations->yCenter);
+                explosion->sprites->z = Z_EXPLOSION;
                 gameIsRunning = false;
             }
 
@@ -305,9 +328,13 @@ int main() {
                 lastTimePrinted = currentSeconds;
             }
 
+        } else {
+            float difX = car->transformations->xCenter - explosion->transformations->xCenter;
+            float difY = car->transformations->yCenter - explosion->transformations->yCenter;
+            explosion->transformations->move(difX,difY);
         }
 
-        float speed = 0.01f / car->speed;
+        float speed = 0.001f / car->speed;
 
         double elapsedSecondsMove = currentSeconds - startMoveTime;
         if (elapsedSecondsMove > speed) {
@@ -323,7 +350,7 @@ int main() {
     glfwTerminate();
 
 	delete spritesCar;
-	delete spritesFuel;
+    delete spritesExplosion;
 
     return 0;
 }
