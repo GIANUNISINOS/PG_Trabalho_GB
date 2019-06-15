@@ -25,7 +25,7 @@ public:
 
 	void movementIteration() {
 		/*
-			Se o carro estiver fora da sua posição final apos a solicitação de movimento
+			Se o carro estiver fora da sua posicao final apos a solicitacao de movimento
 			move esse pouco a pouco
 		*/
 		//int correctRow, correctCol;

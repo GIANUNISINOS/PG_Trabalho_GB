@@ -195,7 +195,9 @@ void testCarColisionWithObjects(){
     }
 }
 
-void rebootGame(){
+void startOrRebootGame(){
+    gameIsRunning = true;
+
     //cria o objeto carro
     createCarObject();
 
@@ -213,7 +215,7 @@ void rebootGame(){
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if(action == GLFW_PRESS) keys[key] = 1;
     if(action == GLFW_RELEASE) keys[key] = 0;
-    if(action == GLFW_PRESS && key == GLFW_KEY_ENTER) rebootGame();
+    if(action == GLFW_PRESS && key == GLFW_KEY_ENTER) startOrRebootGame();
 }
 
 
@@ -260,7 +262,7 @@ int main() {
     tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
 
     //cria objetos em suas posições iniciais
-    rebootGame();
+    startOrRebootGame();
 
     // looping do main
 	double previousFrameTime = glfwGetTime();
@@ -290,7 +292,12 @@ int main() {
         testCarColisionWithObjects();
 
 		//testa colisao com o mapa
-		if (car->isDead) printf("\nIS DEAD\n");
+        if(gameIsRunning==true){
+            if (car->isDead){
+                printf("\nYou Died!\n");
+                gameIsRunning = false;
+            }
+        }
 
 		double currentSeconds = glfwGetTime();
 		float speed = 0.05f;
