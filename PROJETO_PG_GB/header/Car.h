@@ -78,7 +78,7 @@ public:
 
 	void clickReaction(int rowCliked, int colCliked) {
 
-		if (this->onCorrectTile == false) return;
+		if (this->onCorrectTile == false || *gameIsRunning == false) return;
 
 		int diffRows = rowCliked - this->tileRow;
 		int diffCols = colCliked - this->tileCol;

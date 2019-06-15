@@ -41,6 +41,12 @@ Car *car;
 SpriteSheet* spritesExplosion;
 GameObject *explosion;
 
+SpriteSheet* spritesGameOver;
+GameObject *gameOver;
+
+SpriteSheet* spritesGameWin;
+GameObject *gameWin;
+
 vector<SpriteSheet*> spritesFlags;
 vector<GameObject *> flags;
 
@@ -113,6 +119,33 @@ void createExplosionObject(){
             0.0f, false, &gameIsRunning,
             0, 0
     );
+}
+
+void createGameOverObject() {
+	//cria objeto sprites do gameOver
+	spritesGameOver = new SpriteSheet("resource/game_status/gameover.png", true, 1, 1, (float)Z_OUT_OF_SCREEN);
+
+	//cria objeto gameOver
+	gameOver = new GameObject(
+		spritesGameOver,
+		WIDTH, HEIGHT,
+		WIDTH/2.0F, HEIGHT/2.0f,
+		0.0f, false, &gameIsRunning,
+		0, 0
+	);
+}
+void createGameWinObject() {
+	//cria objeto sprites do gameWin
+	spritesGameWin = new SpriteSheet("resource/game_status/gamewin.png", true, 1, 1, (float)Z_OUT_OF_SCREEN);
+
+	//cria objeto gameWin
+	gameWin = new GameObject(
+		spritesGameWin,
+		WIDTH, HEIGHT,
+		WIDTH / 2.0F, HEIGHT / 2.0f,
+		0.0f, false, &gameIsRunning,
+		0, 0
+	);
 }
 
 
@@ -193,6 +226,7 @@ void testCarColisionWithObjects(){
                 if (catchedFlags == CATCH_N_FLAGS) {
                     printf("\nYou Win!\n");
                     gameIsRunning = false;
+					gameWin->sprites->z = Z_STATUS;
                 } else{
                     if(catchedFlags%2 == 0) car->speed = car->speed + 1.0f;
                     changeVisibleFlag();
@@ -214,6 +248,9 @@ void rebootGame(){
 
     //cria explosao
     createExplosionObject();
+
+	createGameOverObject();
+	createGameWinObject();
 }
 
 void startGame(){
@@ -299,6 +336,8 @@ int main() {
         //desenha explosao
         explosion->draw(shaderProgram);
 
+		//desenha gameOver
+		gameOver->draw(shaderProgram);
         //desenha all flags
         drawAllFlags();
 
@@ -313,6 +352,7 @@ int main() {
                 printf("\nYou Died!\n");
                 explosion->transformations->move(car->transformations->xCenter, car->transformations->yCenter);
                 explosion->sprites->z = Z_EXPLOSION;
+				gameOver->sprites->z = Z_STATUS;
                 gameIsRunning = false;
             }
 
