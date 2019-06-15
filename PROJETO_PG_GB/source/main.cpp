@@ -44,9 +44,10 @@ GameObject *fuel;
 vector<SpriteSheet*> spritesFlags;
 vector<GameObject *> flags;
 
-int remainingFlags;
+int catchedFlags;
+int actualVisibleFlag;
 bool gameIsRunning = true;
-double startGameTime;
+double lastTimeCatchFlag;
 
 
 //Atributos janela
@@ -123,40 +124,17 @@ void createCarObject(){
     );
 }
 
-void createFuelObject(){
-    spritesFuel = {};
-    fuel = {};
-
-    //cria objeto sprites de fuel
-    spritesFuel =new SpriteSheet("resource/objects/fuel.png",true, 1, 1, (float) Z_FUEL);
-
-    //cria objeto combustivel
-    float xFuelInitial;
-    float yFuelInitial;
-    int tilePositionFuelRow = 2;
-    int tilePositionFuelCol = 2;
-    tilemap->calculoDesenhoDiamond(xFuelInitial,yFuelInitial,tilePositionFuelRow,tilePositionFuelCol);
-
-    fuel = new GameObject(
-            spritesFuel,
-            (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
-            xFuelInitial+(TILE_WIDTH/2),yFuelInitial+(TILE_HEIGHT/2),
-            0.5f, false,&gameIsRunning,
-            tilePositionFuelRow, tilePositionFuelCol
-    );
-}
-
 void createFlagsObjects(){
     spritesFlags = {};
     flags = {};
 
-    int tilePositionFlagRow[] = {3,11,11,2,7};
-    int tilePositionFlagCol[] = {10,9,4,7,6};
+    int tilePositionFlagRow[] = {2,3,11,11,2,7,5,7,13};
+    int tilePositionFlagCol[] = {2,10,9,4,7,6,13,2,1};
 
     for (int i =0; i < NUMBER_OF_FLAGS; i++){
         //cria objeto sprites de flag
         spritesFlags.push_back(
-                new SpriteSheet("resource/objects/flag.png",true, 1, 1, Z_FLAG)
+                new SpriteSheet("resource/objects/flag.png",true, 1, 1, Z_OUT_OF_SCREEN)
         );
 
         //cria objetos flags
@@ -175,6 +153,15 @@ void createFlagsObjects(){
     }
 }
 
+void changeVisibleFlag(){
+    lastTimeCatchFlag = glfwGetTime();
+    int id = (rand()%NUMBER_OF_FLAGS);
+    while(actualVisibleFlag == id)
+        id = (rand()%NUMBER_OF_FLAGS);
+    actualVisibleFlag = id;
+    spritesFlags[id]->z = Z_FLAG;
+}
+
 void drawAllFlags(){
     for (int i =0; i < NUMBER_OF_FLAGS; i++) {
         flags[i]->draw(shaderProgram);
@@ -182,36 +169,32 @@ void drawAllFlags(){
 }
 
 void testCarColisionWithObjects(){
-    //testa se pegou o combustivel
-    if(car->testCollisionWithAnotherObject(fuel)){
-        fuel->sprites->z = Z_OUT_OF_SCREEN;
-    }
+    if(car->testCollisionWithAnotherObject(flags[actualVisibleFlag])) {
+                catchedFlags++;
+                printf("Voce pegou %d bandeiras!\n",catchedFlags);
+                flags[actualVisibleFlag]->sprites->z = Z_OUT_OF_SCREEN;
+                //testa se ganhou o jogo
 
-    //testa se pegou flags
-    for (int i = 0; i < NUMBER_OF_FLAGS; i++) {
-        if(car->testCollisionWithAnotherObject(flags[i])) {
-            if(flags[i]->sprites->z != Z_OUT_OF_SCREEN) {
-                remainingFlags--;
-                printf("Falta pegar %d bandeiras!\n",remainingFlags);
-            }
-            flags[i]->sprites->z = Z_OUT_OF_SCREEN;
-        }
+                if (catchedFlags == CATCH_N_FLAGS) {
+                    printf("\nYou Win!\n");
+                    gameIsRunning = false;
+                } else{
+                    changeVisibleFlag();
+                }
     }
 }
 
 void rebootGame(){
-    startGameTime = glfwGetTime();
+    srand((unsigned) time(NULL));
     gameIsRunning = true;
+    catchedFlags = 0;
 
     //cria o objeto carro
     createCarObject();
 
-    //cria objeto combustivel
-    createFuelObject();
-
     //cria todas bandeiras
     createFlagsObjects();
-    remainingFlags = NUMBER_OF_FLAGS;
+    changeVisibleFlag();
 }
 
 void startGame(){
@@ -274,6 +257,8 @@ int main() {
     //cria todos itens do jogo em suas posições iniciais
     startGame();
 
+    double lastTimePrinted = glfwGetTime();
+
     // looping do main
 	double startMoveTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
@@ -292,38 +277,43 @@ int main() {
         //desenha
         car->draw(shaderProgram);
 
-        //desenha combustivel
-        fuel->draw(shaderProgram);
-
         //desenha all flags
         drawAllFlags();
 
-        //testa colisao do carro com Objetos
-        testCarColisionWithObjects();
+        double currentSeconds = glfwGetTime();
 
-		//testa colisao com o mapa
-        if(gameIsRunning==true){
-            if (car->isDead){
+        if(gameIsRunning==true) {
+            //testa colisao do carro com Objetos
+            testCarColisionWithObjects();
+
+            //testa colisao com o mapa
+            if (car->isDead) {
                 printf("\nYou Died!\n");
                 gameIsRunning = false;
             }
+
+            // testa se o tempo para pegar a proxima bandeira esgotou
+            double elapsedSecondsFlag = currentSeconds - lastTimeCatchFlag;
+            if (elapsedSecondsFlag > TIME_CATCH_FLAGS) {
+                car->isDead = true;
+            }
+
+            double elapsedSecondsPrint = currentSeconds - lastTimePrinted;
+            if(elapsedSecondsPrint>2){
+                printf("\nFaltam %d segundos!",(int)round(TIME_CATCH_FLAGS-elapsedSecondsFlag));
+                lastTimePrinted = currentSeconds;
+            }
+
         }
 
-		double currentSeconds = glfwGetTime();
-		float speed = 0.05f;
-		if (keys[GLFW_KEY_SPACE] == 1) speed = 0.01f;
+        float speed = 0.05f;
+        if (keys[GLFW_KEY_SPACE] == 1) speed = 0.01f;
 
-		double elapsedSecondsMove = currentSeconds - startMoveTime;
-		if (elapsedSecondsMove > speed) {
-			car->movementIteration();
+        double elapsedSecondsMove = currentSeconds - startMoveTime;
+        if (elapsedSecondsMove > speed) {
+            car->movementIteration();
             startMoveTime = currentSeconds;
-		}
-
-		// testa se o tempo para ganhar o jogo foi esgotado
-//        double elapsedSecondsGame = currentSeconds - startGameTime;
-//        if (elapsedSecondsGame > 15) {
-//            car->isDead = true;
-//        }
+        }
 
         //fila eventos 
 		glfwPollEvents();

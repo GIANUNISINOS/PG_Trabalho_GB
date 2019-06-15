@@ -33,7 +33,7 @@ public:
         invertTextureX = invertX;
         this->width = width;
         this->height = height;
-        this->gameIsRunning =gameIsRunning;
+        this->gameIsRunning = gameIsRunning;
 
 		setupVertices(sprites->columns, sprites->rows);
 

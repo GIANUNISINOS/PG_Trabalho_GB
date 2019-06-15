@@ -42,7 +42,7 @@ public:
 
 		onCorrectTile = (differenceX == 0 && differenceY == 0);
 
-		if (onCorrectTile) this->keyboardReaction();
+		if (onCorrectTile && *gameIsRunning) this->keyboardReaction();
 		else {
 			float x = 0.0f, y = 0.0f;
 			if (differenceX > 0) {

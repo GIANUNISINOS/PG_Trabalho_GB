@@ -12,7 +12,9 @@
 #define TILE_HEIGHT 40
 
 //quantidade de bandeiras no jogo
-#define NUMBER_OF_FLAGS 5
+#define NUMBER_OF_FLAGS 9
+#define CATCH_N_FLAGS 15
+#define TIME_CATCH_FLAGS 10
 
 //define direcoes
 #define DIRECTION_NO 1
@@ -26,9 +28,9 @@
 
 //Camada de profundidade
 #define Z_TILEMAP 0.50
-#define Z_FUEL 0.51
-#define Z_FLAG 0.52
-#define Z_CAR 0.53
+#define Z_FLAG 0.51
+#define Z_CAR 0.52
+#define Z_STATUS 0.53
 #define Z_OUT_OF_SCREEN 2.00
 
 #endif //PROJETO_PG_GB_CONFIGURATIONS_H
