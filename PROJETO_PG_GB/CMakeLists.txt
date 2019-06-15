@@ -8,6 +8,7 @@ include_directories(.)
 add_executable(PROJETO_PG_GB
         CMakeLists.txt
         source/main.cpp
+        header/Configurations.h
         header/Includes.h
         header/Shader.h
         header/Texture.h
@@ -16,9 +17,9 @@ add_executable(PROJETO_PG_GB
         header/VerticesObject.h
         header/Transformations.h
         header/GameObject.h
+        header/Car.h
         header/TileClass.h
-        header/Tilemap.h
-        header/Configurations.h)
+        header/Tilemap.h)
 
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)

@@ -10,6 +10,7 @@
 	#include "header/TileClass.h";
 	#include "header/Tilemap.h";	
 	#include "header/GameObject.h";
+    #include "header/Car.h";
    
    
 #elif _WIN64
@@ -42,6 +43,7 @@ GameObject *fuel;
 
 vector<SpriteSheet*> spritesFlags;
 vector<GameObject *> flags;
+int remainingFlags = NUMBER_OF_FLAGS;
 
 //Atributos janela
 const int WIDTH = ROWS*TILE_WIDTH;
@@ -151,12 +153,10 @@ void createFlagsObjects(){
     int tilePositionFlagRow[] = {3,11,11,2,7};
     int tilePositionFlagCol[] = {10,9,4,7,6};
 
-    for (int i =0; i < 5; i++){
-        float z = (float) (Z_FLAG + (i * 0.01));
-
+    for (int i =0; i < NUMBER_OF_FLAGS; i++){
         //cria objeto sprites de flag
         spritesFlags.push_back(
-                new SpriteSheet("resource/objects/flag.png",true, 1, 1, z)
+                new SpriteSheet("resource/objects/flag.png",true, 1, 1, Z_FLAG)
         );
 
         //cria objetos flags
@@ -176,7 +176,7 @@ void createFlagsObjects(){
 }
 
 void drawAllFlags(){
-    for (int i =0; i < 5; i++) {
+    for (int i =0; i < NUMBER_OF_FLAGS; i++) {
         flags[i]->draw(shaderProgram);
     }
 }
@@ -188,8 +188,12 @@ void testCarColisionWithObjects(){
     }
 
     //testa se pegou flags
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < NUMBER_OF_FLAGS; i++) {
         if(car->testCollisionWithAnotherObject(flags[i])) {
+            if(flags[i]->sprites->z != Z_OUT_OF_SCREEN) {
+                remainingFlags--;
+                printf("Falta pegar %d bandeiras!\n",remainingFlags);
+            }
             flags[i]->sprites->z = Z_OUT_OF_SCREEN;
         }
     }
@@ -247,8 +251,6 @@ int main() {
     //cria todas bandeiras
     createFlagsObjects();
 
-
-
     // looping do main
 	double previousFrameTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window)) {
@@ -277,7 +279,7 @@ int main() {
         testCarColisionWithObjects();
 
 		//testa colisao com o mapa
-		if (car->isDead) printf("\nIS DED\n");
+		if (car->isDead) printf("\nIS DEAD\n");
 
 		double currentSeconds = glfwGetTime();
 		float speed = 0.05f;
