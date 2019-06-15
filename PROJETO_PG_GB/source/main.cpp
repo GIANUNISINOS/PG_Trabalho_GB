@@ -43,7 +43,7 @@ GameObject *fuel;
 
 vector<SpriteSheet*> spritesFlags;
 vector<GameObject *> flags;
-int remainingFlags = NUMBER_OF_FLAGS;
+int remainingFlags;
 
 //Atributos janela
 const int WIDTH = ROWS*TILE_WIDTH;
@@ -62,16 +62,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     RESIZED_WIDTH = width;
     RESIZED_HEIGHT = height;
 }
-
-/*
-	Controla que teclas estão pressionadas em um dado momento
-*/
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if(action == GLFW_PRESS) keys[key] = 1;
-	if(action == GLFW_RELEASE) keys[key] = 0;
-}
-
-
 
 /*
 Define acoes do mouse
@@ -96,7 +86,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 GLFWwindow* createWindow() {
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to survive thirty seconds!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to win in fifteen seconds! Catch All Flags!", NULL, NULL);
     if (window == NULL) {
         printf("%s", "Houve uma falha ao criar a janela GLFW");
         glfwTerminate();
@@ -130,6 +120,9 @@ void createCarObject(){
 }
 
 void createFuelObject(){
+    spritesFuel = {};
+    fuel = {};
+
     //cria objeto sprites de fuel
     spritesFuel =new SpriteSheet("resource/objects/fuel.png",true, 1, 1, (float) Z_FUEL);
 
@@ -150,6 +143,9 @@ void createFuelObject(){
 }
 
 void createFlagsObjects(){
+    spritesFlags = {};
+    flags = {};
+
     int tilePositionFlagRow[] = {3,11,11,2,7};
     int tilePositionFlagCol[] = {10,9,4,7,6};
 
@@ -199,6 +195,27 @@ void testCarColisionWithObjects(){
     }
 }
 
+void rebootGame(){
+    //cria o objeto carro
+    createCarObject();
+
+    //cria objeto combustivel
+    createFuelObject();
+
+    //cria todas bandeiras
+    createFlagsObjects();
+    remainingFlags = NUMBER_OF_FLAGS;
+}
+
+/*
+	Controla que teclas estão pressionadas em um dado momento
+*/
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if(action == GLFW_PRESS) keys[key] = 1;
+    if(action == GLFW_RELEASE) keys[key] = 0;
+    if(action == GLFW_PRESS && key == GLFW_KEY_ENTER) rebootGame();
+}
+
 
 int main() {
 	if (!glfwInit()) {
@@ -242,14 +259,8 @@ int main() {
     //instancia do tilemap
     tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
 
-    //cria o objeto carro
-    createCarObject();
-
-    //cria objeto combustivel
-    createFuelObject();
-
-    //cria todas bandeiras
-    createFlagsObjects();
+    //cria objetos em suas posições iniciais
+    rebootGame();
 
     // looping do main
 	double previousFrameTime = glfwGetTime();
