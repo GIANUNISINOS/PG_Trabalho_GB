@@ -195,7 +195,7 @@ void testCarColisionWithObjects(){
     }
 }
 
-void startOrRebootGame(){
+void rebootGame(){
     gameIsRunning = true;
 
     //cria o objeto carro
@@ -209,13 +209,21 @@ void startOrRebootGame(){
     remainingFlags = NUMBER_OF_FLAGS;
 }
 
+void startGame(){
+    //instancia do tilemap
+    tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
+
+    //cria objetos em suas posições iniciais
+    rebootGame();
+}
+
 /*
 	Controla que teclas estão pressionadas em um dado momento
 */
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if(action == GLFW_PRESS) keys[key] = 1;
     if(action == GLFW_RELEASE) keys[key] = 0;
-    if(action == GLFW_PRESS && key == GLFW_KEY_ENTER) startOrRebootGame();
+    if(action == GLFW_PRESS && key == GLFW_KEY_ENTER) rebootGame();
 }
 
 
@@ -258,11 +266,8 @@ int main() {
     // esta para quando clicar com o mouse
     glfwSetMouseButtonCallback(window, mouse_button_callback);
 
-    //instancia do tilemap
-    tilemap = new Tilemap(TILE_WIDTH, TILE_HEIGHT, ROWS, COLS);
-
-    //cria objetos em suas posições iniciais
-    startOrRebootGame();
+    //cria todos itens do jogo em suas posições iniciais
+    startGame();
 
     // looping do main
 	double previousFrameTime = glfwGetTime();
