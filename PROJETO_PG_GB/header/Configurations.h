@@ -30,8 +30,8 @@
 #define Z_TILEMAP 0.50
 #define Z_FLAG 0.51
 #define Z_CAR 0.52
-#define Z_STATUS 0.53
-#define Z_EXPLOSION 0.54
+#define Z_EXPLOSION 0.53
+#define Z_STATUS 0.54
 #define Z_OUT_OF_SCREEN 2.00
 
 #endif //PROJETO_PG_GB_CONFIGURATIONS_H

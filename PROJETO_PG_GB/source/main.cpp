@@ -336,8 +336,12 @@ int main() {
         //desenha explosao
         explosion->draw(shaderProgram);
 
-		//desenha gameOver
-		gameOver->draw(shaderProgram);
+        //desenha gameOver
+        gameOver->draw(shaderProgram);
+
+        //desenha gameWin
+        gameWin->draw(shaderProgram);
+
         //desenha all flags
         drawAllFlags();
 
