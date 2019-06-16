@@ -1,32 +1,29 @@
 #ifdef __APPLE__
-    #include "header/Configurations.h";
-    #include "header/Includes.h";
-    #include "header/Shader.h";
-    #include "header/Texture.h";
-    #include "header/Layer.h";
-    #include "header/SpriteSheet.h";
-    #include "header/VerticesObject.h";
-	#include "header/Transformations.h";
-	#include "header/TileClass.h";
-	#include "header/Tilemap.h";	
-	#include "header/GameObject.h";
-    #include "header/Car.h";
-   
-   
+    #include "header/Configurations.h"
+    #include "header/Includes.h"
+    #include "header/Shader.h"
+    #include "header/Texture.h"
+    #include "header/Layer.h"
+    #include "header/SpriteSheet.h"
+    #include "header/VerticesObject.h"
+	#include "header/Transformations.h"
+	#include "header/TileClass.h"
+	#include "header/Tilemap.h"
+	#include "header/GameObject.h"
+    #include "header/Car.h"
 #elif _WIN64
-    #include "../header/Configurations.h";
-	#include "../header/Includes.h";
-	#include "../header/Shader.h";
-	#include "../header/Texture.h";
-	#include "../header/Layer.h";
-	#include "../header/SpriteSheet.h";
-	#include "../header/VerticesObject.h";
-	#include "../header/Transformations.h";
-	#include "../header/TileClass.h";
-	#include "../header/Tilemap.h";
-	#include "../header/GameObject.h";
-	#include "../header/Car.h";
-	
+    #include "../header/Configurations.h"
+	#include "../header/Includes.h"
+	#include "../header/Shader.h"
+	#include "../header/Texture.h"
+	#include "../header/Layer.h"
+	#include "../header/SpriteSheet.h"
+	#include "../header/VerticesObject.h"
+	#include "../header/Transformations.h"
+	#include "../header/TileClass.h"
+	#include "../header/Tilemap.h"
+	#include "../header/GameObject.h"
+	#include "../header/Car.h"
 #endif
 
 // definicao de alguns atributos globais
@@ -150,8 +147,8 @@ void createGameWinObject() {
 
 
 void createCarObject(){
-    //cria objeto sprites de carros
-    spritesCar = new SpriteSheet("resource/cars/4cars.png",true, 2, 2, (float) Z_CAR);
+    // cria objeto sprites de carros
+    spritesCar = new SpriteSheet("resource/cars/4cars.png", true, 2, 2, (float) Z_CAR);
     spritesCar->setColumn(1);
     spritesCar->setRow(0);
 
@@ -162,7 +159,7 @@ void createCarObject(){
     int tilePositionCarCol = 0;
     tilemap->calculoDesenhoDiamond(xCarInitial,yCarInitial,tilePositionCarRow,tilePositionCarCol);
 
-	car = new Car(
+	car = new Car (
 			tilemap, keys,
             spritesCar,
             (float)(TILE_WIDTH/2),(float)(TILE_HEIGHT),
@@ -349,7 +346,7 @@ int main() {
 
         double currentSeconds = glfwGetTime();
 
-        if(gameIsRunning==true) {
+        if(gameIsRunning) {
             //testa colisao do carro com Objetos
             testCarColisionWithObjects();
 
