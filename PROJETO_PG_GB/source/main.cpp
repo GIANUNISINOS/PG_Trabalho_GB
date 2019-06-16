@@ -94,7 +94,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 GLFWwindow* createWindow() {
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to win in fifteen seconds! Catch All Flags!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to Catch Flags!", NULL, NULL);
     if (window == NULL) {
         printf("%s", "Houve uma falha ao criar a janela GLFW");
         glfwTerminate();
