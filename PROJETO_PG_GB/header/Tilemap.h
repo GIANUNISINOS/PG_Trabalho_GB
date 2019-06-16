@@ -113,7 +113,7 @@ public:
 				bool isWalking = false;
 				bool isMortal = false;
 
-				for (int i = 0; i < 5; i++)	if (idTex == walkingIds[i])		isWalking = true;
+				for (int i = 0; i < 5; i++)		if (idTex == walkingIds[i])		isWalking = true;
 				for (int i = 0; i < 6; i++)		if (idTex == mortalIds[i])		isMortal = true;
 
                 //cria o tile
