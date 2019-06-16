@@ -107,8 +107,15 @@ public:
                 int idTex = mapa[row][col];
 
                 //define tile caminhavel
-                bool isWalking = (idTex==48);
-                bool isMortal = (idTex==68) || (idTex==20);
+				int walkingIds[5] = { 48, 69, 21, 23, 22 }; //ATEÑCAO -> Se mudar o tamanho aqui, mude tambem no for abaixo
+				int mortalIds[6] = { 68,69,20,21,23,22 };
+
+				bool isWalking = false;
+				bool isMortal = false;
+
+				for (int i = 0; i < 5; i++)	if (idTex == walkingIds[i])		isWalking = true;
+				for (int i = 0; i < 6; i++)		if (idTex == mortalIds[i])		isMortal = true;
+
                 //cria o tile
                 Tile *t = new Tile(x0,y0,idTex,isWalking,isMortal);
                 matrixTiles[row][col] = t;

@@ -224,11 +224,12 @@ void testCarColisionWithObjects(){
                 //testa se ganhou o jogo
 
                 if (catchedFlags == CATCH_N_FLAGS) {
-                    printf("\nYou Win!\n");
+                    printf("\nYou Won!\n");
                     gameIsRunning = false;
 					gameWin->sprites->z = Z_STATUS;
                 } else{
-                    if(catchedFlags%2 == 0) car->speed = car->speed + 1.0f;
+					float speedBonus = PROC_TYPE == 0 ? 1.0f : 0.4F;
+                    if(catchedFlags%2 == 0) car->speed+= speedBonus;
                     changeVisibleFlag();
                 }
     }
@@ -379,10 +380,12 @@ int main() {
             explosion->transformations->move(difX,difY);
         }
 
-        float speed = 0.001f / car->speed;
+
+		float t = PROC_TYPE == 0 ? 0.001f : 0.01f;
+        float moveTime = t / car->speed;
 
         double elapsedSecondsMove = currentSeconds - startMoveTime;
-        if (elapsedSecondsMove > speed) {
+        if (elapsedSecondsMove > moveTime){
             car->movementIteration();
             startMoveTime = currentSeconds;
         }

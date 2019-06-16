@@ -2,6 +2,7 @@
 #define PROJETO_PG_GB_CONFIGURATIONS_H
 
 #define DEBUG  true
+#define PROC_TYPE 1
 
 // tamanho do mapa
 #define ROWS 14
