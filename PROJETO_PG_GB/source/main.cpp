@@ -106,7 +106,7 @@ GLFWwindow* createWindow() {
 
 void createExplosionObject(){
     //cria objeto sprites de explosao
-    spritesExplosion = new SpriteSheet("resource/objects/fire.png",true, 1, 1, (float) Z_OUT_OF_SCREEN);
+    spritesExplosion = new SpriteSheet("resource/objects/fire_icon.png",true, 1, 1, (float) Z_OUT_OF_SCREEN);
 
     //cria objeto esplosao
     explosion = new GameObject(
