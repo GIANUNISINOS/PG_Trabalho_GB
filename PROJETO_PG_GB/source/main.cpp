@@ -94,7 +94,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 }
 
 GLFWwindow* createWindow() {
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to win in fifteen seconds! Catch All Flags!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Try to Catch Flags!", NULL, NULL);
     if (window == NULL) {
         printf("%s", "Houve uma falha ao criar a janela GLFW");
         glfwTerminate();
@@ -120,7 +120,7 @@ void createExplosionObject(){
 
 void createGameOverObject() {
 	//cria objeto sprites do gameOver
-	spritesGameOver = new SpriteSheet("resource/game_status/youLost.png", true, 1, 1, (float)Z_OUT_OF_SCREEN);
+	spritesGameOver = new SpriteSheet("resource/game_status/GAMELOST.png", true, 1, 1, (float)Z_OUT_OF_SCREEN);
 
 	//cria objeto gameOver
 	gameOver = new GameObject(
@@ -133,7 +133,7 @@ void createGameOverObject() {
 }
 void createGameWinObject() {
 	//cria objeto sprites do gameWin
-	spritesGameWin = new SpriteSheet("resource/game_status/victory.png", true, 1, 1, (float)Z_OUT_OF_SCREEN);
+	spritesGameWin = new SpriteSheet("resource/game_status/GAMEWON.png", true, 1, 1, (float)Z_OUT_OF_SCREEN);
 
 	//cria objeto gameWin
 	gameWin = new GameObject(
