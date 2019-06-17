@@ -12,7 +12,6 @@ add_executable(PROJETO_PG_GB
         header/Includes.h
         header/Shader.h
         header/Texture.h
-        header/Layer.h
         header/SpriteSheet.h
         header/VerticesObject.h
         header/Transformations.h

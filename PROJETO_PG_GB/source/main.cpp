@@ -3,7 +3,6 @@
     #include "header/Includes.h"
     #include "header/Shader.h"
     #include "header/Texture.h"
-    #include "header/Layer.h"
     #include "header/SpriteSheet.h"
     #include "header/VerticesObject.h"
 	#include "header/Transformations.h"
@@ -16,7 +15,6 @@
 	#include "../header/Includes.h"
 	#include "../header/Shader.h"
 	#include "../header/Texture.h"
-	#include "../header/Layer.h"
 	#include "../header/SpriteSheet.h"
 	#include "../header/VerticesObject.h"
 	#include "../header/Transformations.h"
@@ -225,7 +223,7 @@ void testCarColisionWithObjects(){
                     gameIsRunning = false;
 					gameWin->sprites->z = Z_STATUS;
                 } else{
-					float speedBonus = PROC_TYPE == 0 ? 1.0f : 0.4F;
+					float speedBonus = PROC_TYPE == 0 ? 1.0f : 0.6F;
                     if(catchedFlags%2 == 0) car->speed+= speedBonus;
                     changeVisibleFlag();
                 }
