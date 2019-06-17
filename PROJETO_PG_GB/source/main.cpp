@@ -332,15 +332,6 @@ int main() {
         //desenha carro
         car->draw(shaderProgram);
 
-        //desenha explosao
-        explosion->draw(shaderProgram);
-
-        //desenha gameOver
-        gameOver->draw(shaderProgram);
-
-        //desenha gameWin
-        gameWin->draw(shaderProgram);
-
         //desenha all flags
         drawAllFlags();
 
@@ -375,6 +366,15 @@ int main() {
             float difX = car->transformations->xCenter - explosion->transformations->xCenter;
             float difY = car->transformations->yCenter - explosion->transformations->yCenter;
             explosion->transformations->move(difX,difY);
+
+			//desenha explosao
+			explosion->draw(shaderProgram);
+
+			//desenha gameOver
+			gameOver->draw(shaderProgram);
+
+			//desenha gameWin
+			gameWin->draw(shaderProgram);
         }
 
 
