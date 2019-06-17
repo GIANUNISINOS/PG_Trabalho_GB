@@ -232,10 +232,28 @@ void testCarColisionWithObjects(){
     }
 }
 
+void deleteCreatedPointers(){
+    if(spritesCar != nullptr)       delete spritesCar;
+    if(car != nullptr)              delete car;
+    if(spritesExplosion != nullptr) delete spritesExplosion;
+    if(explosion != nullptr)        delete explosion;
+    if(spritesGameOver != nullptr)  delete spritesGameOver;
+    if(gameOver != nullptr)         delete gameOver;
+    if(spritesGameWin != nullptr)   delete spritesGameWin;
+    if(gameWin != nullptr)          delete gameWin;
+    if(spritesFlags.size()>0)
+        for (int i =0; i < NUMBER_OF_FLAGS; i++)
+            if(spritesFlags[i] != nullptr)  delete spritesFlags[i];
+
+}
+
 void rebootGame(){
     srand((unsigned) time(NULL));
     gameIsRunning = true;
     catchedFlags = 0;
+
+    //deleta os objetos existentes
+    deleteCreatedPointers();
 
     //cria o objeto carro
     createCarObject();
@@ -394,8 +412,8 @@ int main() {
     // encerra contexto GL e outros recursos da GLFW
     glfwTerminate();
 
-	delete spritesCar;
-    delete spritesExplosion;
-
-    return 0;
+	//deleta os objetos criados nesta classe
+	delete tilemap;
+	deleteCreatedPointers();
+	return 0;
 }
