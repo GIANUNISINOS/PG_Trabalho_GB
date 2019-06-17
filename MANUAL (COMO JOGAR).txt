@@ -1,0 +1,8 @@
+Você está em um carro andando por um território árduo 
+Seu objetivo é atravessar o mapa, e pegar 8 bandeiras
+Você não pode ficar mais de 11 segundos sem pegar uma bandeira
+Cuidado com pedras e troncos de árvore, pois a cada 2 bandeiras você irá mais rápido!
+
+Utilize as setas do teclado para se movimentar.
+
+Aperte enter para começar e reiniciar, e se divirta!
